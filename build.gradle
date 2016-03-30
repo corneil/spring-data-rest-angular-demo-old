@@ -32,8 +32,8 @@ dependencyManagement {
     }
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
-        dependency 'org.webjars.bower:angular:1.5.2'
         dependency 'org.webjars.bower:angular-material:1.0.6'
+        dependency 'org.webjars.bower:angular-material-icons:+'
 
     }
 }
@@ -78,9 +78,9 @@ dependencies {
 
 
 
-    webjars 'org.webjars.bower:angular'
     webjars 'org.webjars.bower:angular-material'
-    compile configurations.webjars
+    webjars 'org.webjars.bower:angular-material-icons'
+    // compile configurations.webjars
     runtime 'com.h2database:h2'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
@@ -115,7 +115,6 @@ task cleanTestJpa(type: Delete) {
 }
 
 def webJars = new File(project.buildDir, 'webjars')
-def resourcesDir = new File(sourceSets.main.output.resourcesDir, 'static/resources')
 task expandWebJars(type: Copy) {
     into webJars
     configurations.webjars.resolve().each {
@@ -124,15 +123,14 @@ task expandWebJars(type: Copy) {
 }
 
 task copyWebJars(type: Copy, dependsOn: expandWebJars) {
-    destinationDir = resourcesDir
+    destinationDir = sourceSets.main.output.resourcesDir
     from webJars
 }
 
-// processResources.dependsOn copyWebJars
+processResources.dependsOn copyWebJars
 processResources.dependsOn expandWebJars
 
 task cleanJars(type: Delete) {
-    delete resourcesDir
     delete webJars
 }
 

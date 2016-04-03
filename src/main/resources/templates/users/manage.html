@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout">
+<head>
+	<title>String Data Rest Angular Demo - User Manager</title>
+	<script type="text/javascript" src="/js//Users.js" th:src="@{/js//Users.js}"></script>
+	<script type="text/javascript" src="/js/UserController.js" th:src="@{/js/UserController.js}"></script>
+	<script type="text/javascript" src="/js/UserService.js" th:src="@{/js/UserService.js}"></script>
+</head>
+<body>
+<md-list ng-controller="menuCtrl" layout="column" layout-align="start start" layout:fragment="menu">
+	<md-list-item class="md-1-line" md-ink-ripple="" role="link" ng-repeat="item in mainMenu">
+		<md-button class="md-primary" ng-click="item.click()">
+			<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
+			<span class="md-body-2">{{item.title}}</span>
+		</md-button>
+	</md-list-item>
+</md-list>
+<div layout:fragment="content" layout="column" class="relative" layout-fill="" role="main">
+	<md-toolbar>
+		<md-tabs md-stretch-tabs="" class="md-primary" md-selected="data.selectedIndex">
+			<md-tab id="tabUsers" aria-controls="users-content">Users</md-tab>
+			<md-tab id="tabGroups" aria-controls="groups-content">Groups</md-tab>
+			<md-tab id="tabMembers" aria-controls="members-content">Members</md-tab>
+		</md-tabs>
+	</md-toolbar>
+	<md-content flex="" md-scroll-y="">
+		<ui-view layout="column" layout-fill="" layout-padding="">
+			<div class="inset" hide-sm=""></div>
+			<ng-switch on="data.selectedIndex" class="tabpanel-container">
+				<div role="tabpanel"
+				     id="users-content"
+				     aria-labelledby="tabUsers"
+				     ng-switch-when="0"
+				     md-swipe-left="next()"
+				     md-swipe-right="previous()"
+				     layout="row"
+				     layout-align="center center">
+					<md-list flex="">
+						<md-list-item class="md-3-line" ng-repeat="user in users">
+							<div class="md-list-item-text" layout="column">
+								<h3>{{ user.userId }}</h3><h4>{{ user.fullName }}</h4><p>{{ user.email }}</p>
+							</div>
+						</md-list-item>
+					</md-list>
+					<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="showAddUser($event)">
+						<md-icon md-svg-icon="content:ic_add"></md-icon>
+					</md-button>
+				</div>
+				<div role="tabpanel"
+				     id="group-content"
+				     aria-labelledby="tabGroups"
+				     ng-switch-when="0"
+				     md-swipe-left="next()"
+				     md-swipe-right="previous()"
+				     layout="row"
+				     layout-align="center center"></div>
+				<div role="tabpanel"
+				     id="members-content"
+				     aria-labelledby="tabMembers"
+				     ng-switch-when="0"
+				     md-swipe-left="next()"
+				     md-swipe-right="previous()"
+				     layout="row"
+				     layout-align="center center"></div>
+			</ng-switch>
+		</ui-view>
+	</md-content>
+</div>
+<script layout:fragment="bootstrap" type="text/javascript">
+	app.controller("menuCtrl", ["$scope", function ($scope) {
+		$scope.loadUsers = function () {
+			console.log('loadUsers');
+			// load the users
+		}
+		$scope.loadGroups = function () {
+			console.log('loadGroups');
+		}
+		$scope.loadMembers = function () {
+			console.log('loadMembers')
+		}
+		$scope.mainMenu = [
+			{
+				name: 'users', title: 'Users',
+				icon: 'social:ic_person',
+				click: $scope.loadUsers
+			},
+			{
+				name: 'groups',
+				title: 'Groups',
+				icon: 'social:ic_people',
+				click: $scope.loadGroups
+			},
+			{
+				name: 'members',
+				title: 'Members',
+				icon: 'social:ic_person_add',
+				click: $scope.loadMembers
+			}
+		]
+	}])
+	;
+</script>
+</body>
+</html>

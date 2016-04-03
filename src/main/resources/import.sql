@@ -2,7 +2,7 @@
 -- Users
 insert into users(id, user_id, date_of_birth, email_address, full_name) values (1, 'piet', '1911-11-11', 'piet.pompies@email.com', 'Piet Pompies')
 insert into users(id, user_id, date_of_birth, email_address, full_name) values (2, 'johndoe', '1922-02-02', 'john.doe@email.com', 'John Doe')
-insert into users(id, user_id, date_of_birth, email_address, full_name) values (3, 'corneil', '1922-10-19', 'corneil@email.com', 'Corneil du Plessis')
+insert into users(id, user_id, date_of_birth, email_address, full_name) values (3, 'corneil', '1922-10-19', 'corneil@jumpco.io', 'Corneil du Plessis')
 
 -- Groups
 insert into groups(id, group_name, group_owner) values (1, 'admin-users', 3)

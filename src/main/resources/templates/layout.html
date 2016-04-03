@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:ng="http://angularjs.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
 	<meta charset="utf-8"/>
@@ -11,19 +12,6 @@
 	      href="/webjars/angular-material/1.0.6/angular-material.css"
 	      th:href="@{/webjars/angular-material/1.0.6/angular-material.css}"/>
 	<link rel="stylesheet" href="/css/app.css" th:href="@{/css/app.css}"></link>
-	<!-- because of ng-cloak it doesn't matter that the script sections are in head -->
-	<script type="text/javascript"
-	        src="/webjars/angular/1.5.3/angular.js"
-	        th:src="@{/webjars/angular/1.5.3/angular.js}"></script>
-	<script type="text/javascript"
-	        src="/webjars/angular-animate/1.5.3/angular-animate.js"
-	        th:src="@{/webjars/angular-animate/1.5.3/angular-animate.js}"></script>
-	<script type="text/javascript"
-	        src="/webjars/angular-aria/1.5.3/angular-aria.js"
-	        th:src="@{/webjars/angular-aria/1.5.3/angular-aria.js}"></script>
-	<script type="text/javascript"
-	        src="/webjars/angular-material/1.0.6/angular-material.js"
-	        th:src="@{/webjars/angular-material/1.0.6/angular-material.js}"></script>
 </head>
 <body ng-app="springDataRestDemo" ng-controller="AppCtrl" layout="row" ng-cloak="">
 <md-sidenav layout="column"
@@ -49,8 +37,26 @@
 	</md-list>
 </md-sidenav>
 <div layout:fragment="content" layout="column" class="relative" layout-fill="" role="main"></div>
+<script type="text/javascript"
+        src="/webjars/angular/1.5.3/angular.js"
+        th:src="@{/webjars/angular/1.5.3/angular.js}"></script>
+<script type="text/javascript"
+        src="/webjars/angular-animate/1.5.3/angular-animate.js"
+        th:src="@{/webjars/angular-animate/1.5.3/angular-animate.js}"></script>
+<script type="text/javascript"
+        src="/webjars/angular-aria/1.5.3/angular-aria.js"
+        th:src="@{/webjars/angular-aria/1.5.3/angular-aria.js}"></script>
+<script type="text/javascript"
+        src="/webjars/angular-material/1.0.6/angular-material.js"
+        th:src="@{/webjars/angular-material/1.0.6/angular-material.js}"></script>
+<script type="text/javascript"
+        src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"
+        th:src="@{/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js}"></script>
+<script type="text/javascript" src="/js/UserService.js" th:src="@{/js/UsersApp.js}"></script>
+<script type="text/javascript" src="/js/UserService.js" th:src="@{/js/UserService.js}"></script>
+<script type="text/javascript" src="/js/UserController.js" th:src="@{/js/UserController.js}"></script>
 <script type="application/javascript">
-	var app = angular.module("springDataRestDemo", ["ngMaterial"]);
+	var app = angular.module('springDataRestDemo');
 	app.controller("AppCtrl", ["$scope", "$mdSidenav", '$window', function ($scope, $mdSidenav, $window) {
 		$scope.toggleSidenav = function (menuId) {
 			$mdSidenav(menuId).toggle();

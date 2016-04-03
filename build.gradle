@@ -35,6 +35,7 @@ dependencyManagement {
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
         dependency 'org.webjars.bower:angular-material:1.0.6'
+        dependency 'org.webjars.bower:angular-gravatar:0.4.1'
         dependency 'org.webjars:material-design-icons:2.2.0'
     }
 }
@@ -79,6 +80,7 @@ dependencies {
     }
     compile 'javax.el:javax.el-api'
     webJarsBower 'org.webjars.bower:angular-material'
+    webJarsBower 'org.webjars.bower:angular-gravatar'
     svgIcons 'org.webjars:material-design-icons'
     runtime 'com.h2database:h2'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

@@ -1,42 +1,72 @@
-md-content.md-default-theme {
-    background-color: #eee;
+// Colors
+$gray: #eee;
+
+// Angular
+   [ng-click] {
+&:hover {
+     cursor: pointer;
+ }
 }
 
-md-card {
-    background-color: #fff;
-}
-md-card h2:first-of-type {
-    margin-top: 0;
+// Main content bg color
+   md-content.md-default-theme {
+       background-color: $gray;
+   }
+
+// Navigation drawer pattern: https://www.google.com/design/spec/patterns/navigation-drawer.html#navigation-drawer-specs
+                                      md-sidenav {
+& > md-toolbar {
+        padding: 15px;
+        height: 150px;
+        max-height: 150px;
+    }
+& md-list-item.md-2-line .md-list-item-text {
+      padding-top: 14px;
+      padding-bottom: 12px;
+  }
+& md-divider {
+      margin-top: 4px;
+      margin-bottom: 4px;
+  }
 }
 
-md-toolbar .md-button.md-default-theme {
-    border-radius: 99%;
-}
+// White svg icons in toolbar and fab
 
-h2 {
-    font-weight: 400;
-}
-
-.md-toolbar-tools-bottom {
-    font-size: small;
-}
-.md-toolbar-tools-bottom :last-child {
-    opacity: 0.8;
-}
-
-md-toolbar:not(.md-hue-1),
-.md-fab {
-    fill: #fff;
-}
-
-md-sidenav {
+   md-sidenav {
+md-icon {
     fill: #737373;
-}
-md-sidenav ng-md-icon {
     position: relative;
-    top: 5px;
+}
+.md-avatar {
+    height: 64px;
+    width: 64px;
+}
 }
 
-.user-avatar {
-    border-radius: 99%;
+/* More closely matches https://www.google.com/design/spec/components/lists.html#lists-specs */
+md-list-item.md-3-line {
+md-divider {
+&[md-inset] {
+     left: 70px;
+ }
+}
+}
+
+// Round avatar
+   .md-avatar {
+& > svg {
+        border-radius: 50%;
+    }
+}
+
+/* fade animation */
+.animate-show {
+    transition: 0.75s ease-out opacity;
+    opacity: 1;
+&.ng-hide {
+     height: 0;
+     min-height: 0;
+     opacity: 0;
+     overflow: hidden;
+ }
 }

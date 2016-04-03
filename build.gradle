@@ -2,7 +2,7 @@ buildscript {
     ext {
         springBootVersion = '1.3.3.RELEASE'
         springPlatformVersion = '2.0.3.RELEASE'
-        manifestVendor='com.github.corneil'
+        manifestVendor = 'com.github.corneil'
     }
     repositories {
         mavenLocal()
@@ -10,7 +10,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath localGroovy()
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
@@ -19,6 +20,7 @@ repositories {
     jcenter()
     mavenCentral()
 }
+
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'java'
@@ -33,13 +35,14 @@ dependencyManagement {
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
         dependency 'org.webjars.bower:angular-material:1.0.6'
-        dependency 'org.webjars.bower:angular-material-icons:+'
-
+        dependency 'org.webjars:material-design-icons:2.2.0'
     }
 }
+
 configurations {
     providedRuntime
-    webjars
+    svgIcons
+    webJarsBower
 }
 
 version = '0.0.1-SNAPSHOT'
@@ -75,19 +78,13 @@ dependencies {
         exclude(module: 'xml-apis')
     }
     compile 'javax.el:javax.el-api'
-
-
-
-    webjars 'org.webjars.bower:angular-material'
-    webjars 'org.webjars.bower:angular-material-icons'
-    // compile configurations.webjars
+    webJarsBower 'org.webjars.bower:angular-material'
+    svgIcons 'org.webjars:material-design-icons'
     runtime 'com.h2database:h2'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
-
-
 
 bootRepackage {
     mainClass = 'com.github.corneil.data_rest_demo.SpringDataRestAngularDemoApplication'
@@ -114,25 +111,79 @@ task cleanTestJpa(type: Delete) {
     }
 }
 
-def webJars = new File(project.buildDir, 'webjars')
-task expandWebJars(type: Copy) {
-    into webJars
-    configurations.webjars.resolve().each {
+def svgIcons = new File(project.projectDir, 'extracted/svgIcons')
+task expandSvgIcons(type: Copy) {
+    doFirst {
+        svgIcons.mkdirs()
+    }
+    into svgIcons
+    configurations.svgIcons.resolve().each {
+        from zipTree(it.absoluteFile)
+        include '**/*24*.svg'
+        include '**/*black_24*.png'
+    }
+}
+
+
+def webJarsBower = new File(project.buildDir, 'webjarsBower')
+task expandWebJarsBower(type: Copy) {
+    into webJarsBower
+    configurations.webJarsBower.resolve().each {
         from zipTree(it.absoluteFile)
     }
 }
 
-task copyWebJars(type: Copy, dependsOn: expandWebJars) {
+def extractName(String name, String suffix) {
+    if(name.endsWith(suffix)) {
+        return name - suffix
+    }
+    return null
+}
+
+task createSvgIconSets(dependsOn: expandSvgIcons) {
+    def baseDir = new File(svgIcons, 'META-INF/resources/webjars/material-design-icons/2.2.0')
+    def iconsDir = new File(project.projectDir, 'src/main/resources/static/iconsets/svg')
+    inputs.files fileTree(dir:baseDir, include:'**/svg/production/*.svg')
+    outputs.dir iconsDir
+    doLast {
+        iconsDir.mkdirs()
+        baseDir.eachDir { dir ->
+            def prodDir = new File(dir, 'svg/production')
+            if(prodDir.exists()) {
+                def inputTree = fileTree(dir:prodDir, include:'*.svg')
+                def iconSet = new File(iconsDir, "$dir.name-icons.svg")
+                if(!iconSet.exists()) {
+                    def writer = new FileWriter(iconSet)
+                    def pw = new PrintWriter(writer)
+                    pw << '<svg><defs>\n'
+                    def icons = new HashSet()
+                    def suffix = '_24px.svg'
+                    logger.info "$project.path:scanning:$prodDir for $suffix"
+                    inputTree.files.each { svg ->
+                        def name = extractName(svg.name, suffix)
+                        if (name && !icons.contains(name)) {
+                            icons.add(name)
+                            logger.info "${project.path}:adding ${svg.name} to ${iconSet.name}"
+                            def svgIcon = new XmlSlurper().parseText(svg.text)
+                            pw << "<g id='$name'><path d='${svgIcon.path.@d}'/></g>\n"
+                        }
+                    }
+                    pw << '</defs></svg>\n'
+                    writer.close()
+                    logger.lifecycle "$project.path:created:$iconSet.name"
+                }
+            }
+        }
+    }
+}
+
+task copyWebJarsBower(type: Copy, dependsOn: expandWebJarsBower) {
     destinationDir = sourceSets.main.output.resourcesDir
-    from webJars
+    from webJarsBower
 }
 
-processResources.dependsOn copyWebJars
-processResources.dependsOn expandWebJars
 
-task cleanJars(type: Delete) {
-    delete webJars
-}
+// processResources.dependsOn createSvgIconSets
+processResources.dependsOn copyWebJarsBower
 
-clean.dependsOn cleanJars
 cleanTest.dependsOn cleanTestJpa

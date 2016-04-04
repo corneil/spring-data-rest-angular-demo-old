@@ -88,8 +88,6 @@ local.properties
 # External tool builders
 .externalToolBuilders/
 
-# Locally stored "Eclipse launch configurations"
-*.launch
 
 # CDT-specific
 .cproject
@@ -110,3 +108,4 @@ local.properties
 .texlipse
 
 # Created by .ignore support plugin (hsz.mobi)
+/.idea/

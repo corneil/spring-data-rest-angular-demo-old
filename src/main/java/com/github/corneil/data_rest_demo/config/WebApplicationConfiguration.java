@@ -23,7 +23,12 @@ public class WebApplicationConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/error").setViewName("error");
-        registry.addViewController("/index").setViewName("index");
+        registry.addViewController("/").setViewName("users/manage");
+        registry.addViewController("/users").setViewName("users/manage");
+        registry.addViewController("/groups").setViewName("groups/manage");
+        registry.addViewController("/members").setViewName("members/manage");
+        registry.addViewController("/admin/hal-browser").setViewName("admin/hal-browser");
+        registry.addViewController("/admin/h2-console").setViewName("admin/h2-console");
         logger.info("addViewControllers:{}", registry.toString());
     }
     @Bean

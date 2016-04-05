@@ -8,15 +8,15 @@ This project shows how far you can get by using Spring Data Rest without adding 
 
 == Technologies Used
 
-* Spring Boot - 1.3.3
-* Spring Data JPA - 1.9.4
-* Spring Data Rest - 2.4.4
+* link:http://projects.spring.io/spring-boot[Spring Boot] - 1.3.3
+* link:http://projects.spring.io/spring-data-jpa[Spring Data JPA] - 1.9.4
+* link:http://projects.spring.io/spring-data-rest[Spring Data Rest] - 2.4.4
 * Spring Web MVC - 4.2.5
-* Lombok - 1.16.6
-* AngularJS - 1.5.3
-* Angular Material - 1.0.6
-* Angular Gravatar - 0.4.1
-* Material Design Icons - 2.2.0
+* link:https://projectlombok.org[Lombok] - 1.16.6
+* link:https://angularjs.org[AngularJS] - 1.5.3
+* link:https://material.angularjs.org[Angular Material] - 1.0.6
+* link:https://github.com/wallin/angular-gravatar[Angular Gravatar] - 0.4.1
+* link:https://github.com/google/material-design-icons[Material Design Icons] - 2.2.0
 
 == Design decisions
 

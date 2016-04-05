@@ -6,22 +6,46 @@
             function (UserService, $scope, $mdSidenav, $mdBottomSheet, $log) {
 
                 $scope.selected = null;
+                $scope.userSelected = 0;
                 $scope.users = [];
 
                 UserService.loadAllUsers().then(function (users) {
                     $log.debug('loaded ' + users.length + ' users');
                     $scope.users = users;
-                    $scope.selected = users[0];
+                    for(var i in users) {
+                        users[i].selected = false;
+                    }
                 }, function (response) {
                     $log.error('Error response:' + response.status + ':' + response.statusText);
                 });
 
-                function toggleUsersList() {
+                $scope.toggleUsersList = function () {
                     $mdSidenav('left').toggle();
                 }
-
-                function selectUser(user) {
-                    $scope.selected = angular.isNumber(user) ? $scope.users[user] : user;
+                $scope.checkSelected = function () {
+                    var selectedCount = 0;
+                    $scope.selected = null;
+                    for(var i in $scope.users) {
+                        if($scope.users[i].selected) {
+                            if($scope.selected == null) {
+                                $scope.selected = $scope.users[i];
+                            }
+                            selectedCount += 1;
+                        }
+                    }
+                    // Only one item will be assigned to selected
+                    if(selectedCount > 1) {
+                        $scope.selected = null;
+                    }
+                    $scope.userSelected = selectedCount;
+                    $log.debug('checkSelected:' + selectedCount);
+                    return selectedCount;
+                }
+                $scope.toggleUser = function(user) {
+                    $log.debug('toggle:start:' + user.userId + ':' + user.selected);
+                    user.selected = !user.selected;
+                    $scope.checkSelected();
+                    $log.debug('toggle:end:' + user.userId + ':' + user.selected);
                 }
             }]);
 

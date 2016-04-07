@@ -5,11 +5,13 @@
         .controller('UserController', ['UserService', '$scope', '$mdSidenav', '$mdBottomSheet', '$log',
             function (UserService, $scope, $mdSidenav, $mdBottomSheet, $log) {
 
-                $scope.selected = null;
+                $scope.selected = [];
                 $scope.userSelected = 0;
                 $scope.users = [];
+                $scope.promise = null;
 
-                UserService.loadAllUsers().then(function (users) {
+                $scope.promise = UserService.loadAllUsers();
+                $scope.promise.then(function (users) {
                     $log.debug('loaded ' + users.length + ' users');
                     $scope.users = users;
                     for(var i in users) {

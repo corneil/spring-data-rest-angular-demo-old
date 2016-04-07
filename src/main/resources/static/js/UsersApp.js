@@ -1,5 +1,5 @@
 (function () {
     'use strict';
-    angular.module('springDataRestDemo', ['ngMaterial', 'ui.gravatar']);
+    angular.module('springDataRestDemo', ['ngMaterial', 'ui.gravatar', 'md.data.table']);
 
 })();

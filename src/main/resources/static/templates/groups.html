@@ -1,0 +1,40 @@
+<md-content ng-controller="GroupController" layout="column" flex class="relative" layout-fill role="main" ng-cloak>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<md-button class="md-icon-button" aria-label="Settings" ng-disabled="true">
+				<md-icon md-svg-icon="navigation:ic_menu" arial-label="Menu"></md-icon>
+			</md-button>
+			<span flex></span>
+			<md-button class="md-icon-button"
+			           ng-disabled="selected == null || selected.length != 1"
+			           ng-click="editGroup($event)"
+			           aria-label="Edit">
+				<md-icon md-svg-icon="editor:ic_mode_edit"></md-icon>
+			</md-button>
+			<md-button class="md-icon-button" aria-label="Delete" ng-disabled="selected == null || selected.length.length == 0">
+				<md-icon md-svg-icon="action:ic_delete"></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	<md-table-container>
+		<table md-table md-row-select="true" data-ng-model="selected" multiple="true" md-progress="promise">
+			<thead md-head md-order="groupOrder">
+			<tr md-row>
+				<th md-column md-order-by="groupName">Name</th>
+				<th md-column md-order-by="description">Description</th>
+				<th md-column md-order-by="groupOwner">Owner</th>
+			</tr>
+			</thead>
+			<tbody md-body>
+			<tr md-row md-select="group" md-select-id="groupName" md-auto-select="true" ng-repeat="group in groups">
+				<td md-cell><span>{{group.groupName}}</span></td>
+				<td md-cell><span>{{group.description}}</span></td>
+				<td md-cell><span>{{group._groupOwner.userId + ': ' + group._groupOwner.fullName}}</span></td>
+			</tr>
+			</tbody>
+		</table>
+	</md-table-container>
+	<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="addGroup($event)">
+		<md-icon md-svg-icon="content:ic_add"></md-icon>
+	</md-button>
+</md-content>

@@ -19,7 +19,7 @@
 	</md-toolbar>
 	<md-list layout="column" layout-align="start start" layout:fragment="menu">
 		<md-list-item class="md-1-line" md-ink-ripple role="link" ng-repeat="item in mainMenu">
-			<md-button class="md-primary" ng-click="item.click()">
+			<md-button class="md-primary" ng-click="showMenu(item)">
 				<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
 				<span class="md-body-2">{{item.title}}</span>
 			</md-button>
@@ -29,7 +29,7 @@
 	<md-subheader>Management</md-subheader>
 	<md-list layout="column" layout-align="start start">
 		<md-list-item class="md-1-line" md-ink-ripple role="link" ng-repeat="item in adminMenu">
-			<md-button class="md-primary" ng-click="showAdmin(item.name)">
+			<md-button class="md-primary" ng-click="showMenu(item)">
 				<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
 				<span class="md-body-2">{{item.title}}</span>
 			</md-button>
@@ -37,7 +37,7 @@
 	</md-list>
 </md-sidenav>
 <md-content layout-fill>
-	<ng-include src="activeContent" />
+	<ng-include src="activeContent"/>
 </md-content>
 <script type="text/javascript" src="/webjars/moment/2.12.0/moment.js"></script>
 <script type="text/javascript" src="/webjars/angular/1.5.3/angular.js"></script>
@@ -46,9 +46,10 @@
 <script type="text/javascript" src="/webjars/angular-material/1.0.6/angular-material.js"></script>
 <script type="text/javascript" src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"></script>
 <script type="text/javascript" src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"></script>
-<script type="text/javascript" src="/js/UserApp.js"></script>
-<script type="text/javascript" src="/js/UserService.js"></script>
+<script type="text/javascript" src="/js/DataApp.js"></script>
+<script type="text/javascript" src="/js/DataService.js"></script>
 <script type="text/javascript" src="/js/UserController.js"></script>
+<script type="text/javascript" src="/js/GroupController.js"></script>
 <script type="application/javascript">
 	var app = angular.module('springDataRestDemo');
 	app.controller("AppCtrl", ["$scope", "$mdSidenav", '$window', function ($scope, $mdSidenav, $window) {
@@ -56,60 +57,51 @@
 			$mdSidenav(menuId).toggle();
 		};
 		$scope.activeContent = 'templates/users.html';
-		$scope.loadUsers = function () {
-			console.log('loadUsers');
-			// $window.location.href = '/users';
-			$scope.activeContent = 'templates/users.html';
-		}
-		$scope.loadGroups = function () {
-			console.log('loadGroups');
-			// $window.location.href = '/groups';
-		}
-		$scope.loadMembers = function () {
-			console.log('loadMembers')
-			// $window.location.href = '/members';
-		}
 		$scope.mainMenu = [
 			{
 				name: 'users', title: 'Users',
 				icon: 'social:ic_person',
-				click: $scope.loadUsers
+				href: '/users',
+				templateName: 'templates/users.html'
 			},
 			{
 				name: 'groups',
 				title: 'Groups',
 				icon: 'social:ic_people',
-				click: $scope.loadGroups
+				href: '/groups',
+				templateName: 'templates/groups.html'
 			},
 			{
 				name: 'members',
 				title: 'Members',
 				icon: 'social:ic_person_add',
-				click: $scope.loadMembers
+				href: '/members',
+				templateName: 'templates/members.html'
 			}
-		]
+		];
 		$scope.adminMenu = [
-			{name: 'halBrower', title: 'HAL Browser', icon: 'social:ic_domain', href: '/admin/hal-browser', contentName: 'templates/hal-browser.html'},
-			{name: 'h2Console', title: 'H2 Console', icon: 'action:ic_dashboard', href: '/admin/h2-console', contentName: 'templates/h2-console.html'}
-		]
-
-		$scope.showAdmin = function (name) {
-			for (var i in $scope.adminMenu) {
-				var item = $scope.adminMenu[i]
-				if (item.name == name) {
-					// var win = $window.open(item.href, '_blank');
-					// win.focus();
-					// $window.location.href = item.href;
-					$scope.activeContent = item.contentName;
-					return;
-				}
+			{
+				name: 'halBrower',
+				title: 'HAL Browser',
+				icon: 'social:ic_domain',
+				href: '/admin/hal-browser',
+				templateName: 'templates/hal-browser.html'
+			},
+			{
+				name: 'h2Console',
+				title: 'H2 Console',
+				icon: 'action:ic_dashboard',
+				href: '/admin/h2-console',
+				templateName: 'templates/h2-console.html'
 			}
-			console.error('could not find item for:' + name);
+		];
+		$scope.showMenu = function (item) {
+			$scope.activeContent = item.templateName;
 		}
 	}]);
 	var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor'];
 	app.config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider) {
-		$mdDateLocaleProvider.formatDate = function(date) {
+		$mdDateLocaleProvider.formatDate = function (date) {
 			return moment(date).format('YYYY-MM-DD');
 		};
 		$mdThemingProvider.theme("default")

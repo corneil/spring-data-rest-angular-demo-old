@@ -21,6 +21,8 @@ public class GroupInfo {
     @Column(unique = true)
     private String groupName;
     @NotNull
+    private String description;
+    @NotNull
     @ManyToOne(cascade = {CascadeType.ALL})
     private UserInfo groupOwner;
     @Id
@@ -29,9 +31,10 @@ public class GroupInfo {
     public GroupInfo() {
         super();
     }
-    public GroupInfo(String groupName, UserInfo groupOwner) {
+    public GroupInfo(String groupName, String description, UserInfo groupOwner) {
         super();
         this.groupName = groupName;
+        this.description = description;
         this.groupOwner = groupOwner;
     }
 }

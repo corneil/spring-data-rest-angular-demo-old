@@ -5,7 +5,7 @@
 
         $scope.newUser = newUser;
         $scope.user = user;
-        $scope.dateOfBirth = newUser ? null : moment(user.dateOfBirth).toDate();
+        $scope.dateOfBirth = !newUser && user.dateOfBirth ? moment(user.dateOfBirth).toDate() : null;
         $scope.dialogTitle = $scope.newUser ? 'Create User' : 'Edit User';
         $log.info('scope values init:' + $scope.newUuser + ':' + $scope.dialogTitle + ':' + $scope.dateOfBirth + ':' + $scope.user);
         $scope.cancel = function () {
@@ -20,6 +20,7 @@
                 $log.info('user=' + JSON.stringify(user));
                 $mdToast.show(
                     $mdToast.simple()
+                        .position({top:true,right:true})
                         .textContent($scope.newUser ? 'User Created' : 'User Saved')
                         .hideDelay(3000)
                 );
@@ -28,8 +29,9 @@
                 $log.error('Error response:' + response.status + ':' + response.statusText);
                 $mdToast.show(
                     $mdToast.simple()
+                        .position({top:true,right:true})
                         .textContent('Error:' + response.statusText)
-                        .hideDelay(3000).theme('error')
+                        .hideDelay(7000).theme('error')
                 );
             });
         };
@@ -81,7 +83,7 @@
                 });
             };
             $scope.addUser = function (ev) {
-                $scope.selectedUser = {fullName: '', userId: '', emailAddress: '', dateOfBirth: ''};
+                $scope.selectedUser = {fullName: '', userId: '', emailAddress: '', dateOfBirth: null};
                 $log.info('adding user');
                 $mdDialog.show({
                     parent: angular.element(document.body),

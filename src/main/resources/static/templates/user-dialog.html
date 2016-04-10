@@ -1,0 +1,37 @@
+<md-dialog aria-label="{{dialogTitle}}" ng-cloak>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{dialogTitle}}</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="cancel()">
+				<md-icon md-svg-icon="navigation:ic_close" aria-label="Close dialog"></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	<md-dialog-content class="md-dialog-content">
+		<form name="userForm" ng-submit="save()">
+			<div layout="column">
+				<md-input-container class="md-block">
+					<label>User Id</label>
+					<input name="userId" ng-disabled="!newUser" ng-model="user.userId" md-maxlength="32" required>
+				</md-input-container>
+				<md-input-container class="md-block">
+					<label>Full name</label>
+					<input name="fullName" ng-model="user.fullName" required>
+				</md-input-container>
+				<md-input-container class="md-block">
+					<label>Email</label>
+					<input name="emailAddress" ng-model="user.emailAddress" type="email" required>
+				</md-input-container>
+				<md-datepicker ng-model="dateOfBirth"
+				               md-max-date="moment().toDate()"
+				               md-placeholder="Enter date of birth"
+				               required></md-datepicker>
+			</div>
+		</form>
+	</md-dialog-content>
+	<md-dialog-actions>
+		<md-button class="md-primary" ng-click="save()">Save</md-button>
+		<md-button class="md-primary" ng-click="cancel()">Cancel</md-button>
+	</md-dialog-actions>
+</md-dialog>

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "group_members")
+@Table(name = "group_members", schema = "sd")
 @Data
 @EqualsAndHashCode(exclude = {"id", "enabled"})
 public class GroupMember {

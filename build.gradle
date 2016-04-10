@@ -37,6 +37,7 @@ dependencyManagement {
         dependency 'org.webjars.bower:angular-material:1.0.6'
         dependency 'org.webjars.bower:angular-gravatar:0.4.1'
         dependency 'org.webjars:material-design-icons:2.2.0'
+        dependency 'org.webjars.bower:moment:2.12.0'
         dependency 'org.webjars.bower:angular-material-data-table:0.10.3'
     }
 }
@@ -83,6 +84,7 @@ dependencies {
     webJarsBower 'org.webjars.bower:angular-material'
     webJarsBower 'org.webjars.bower:angular-gravatar'
     webJarsBower 'org.webjars.bower:angular-material-data-table'
+    webJarsBower 'org.webjars.bower:moment'
     svgIcons 'org.webjars:material-design-icons'
     runtime 'com.h2database:h2'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

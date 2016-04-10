@@ -1,28 +1,24 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8"/>
 	<title>String Data Rest Angular Demo</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
-	<link rel="stylesheet"
-	      href="/webjars/angular-material/1.0.6/angular-material.css"
-	      th:href="@{/webjars/angular-material/1.0.6/angular-material.css}"/>
-	<link rel="stylesheet"
-	      href="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.css"
-	      th:href="@{/webjars/angular-material-data-table/0.10.3/dist/md-data-table.css}"/>
-	<link rel="stylesheet" href="/css/app.css" th:href="@{/css/app.css}"></link>
+	<link rel="stylesheet" href="/webjars/angular-material/1.0.6/angular-material.css"/>
+	<link rel="stylesheet" href="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.css"/>
+	<link rel="stylesheet" href="/css/app.css"></link>
 </head>
-<body ng-app="springDataRestDemo" ng-controller="AppCtrl" layout="row" ng-cloak="">
+<body ng-app="springDataRestDemo" ng-controller="AppCtrl" layout="row" ng-cloak>
 <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 	<md-toolbar class="md-tall md-hue-2">
-		<span flex=""></span>
+		<span flex></span>
 		<div layout="column" class="md-toolbar-tools-bottom inset">
 			<div>Spring Data Rest Demo</div>
 		</div>
 	</md-toolbar>
 	<md-list layout="column" layout-align="start start" layout:fragment="menu">
-		<md-list-item class="md-1-line" md-ink-ripple="" role="link" ng-repeat="item in mainMenu">
+		<md-list-item class="md-1-line" md-ink-ripple role="link" ng-repeat="item in mainMenu">
 			<md-button class="md-primary" ng-click="item.click()">
 				<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
 				<span class="md-body-2">{{item.title}}</span>
@@ -32,7 +28,7 @@
 	<md-divider></md-divider>
 	<md-subheader>Management</md-subheader>
 	<md-list layout="column" layout-align="start start">
-		<md-list-item class="md-1-line" md-ink-ripple="" role="link" ng-repeat="item in adminMenu">
+		<md-list-item class="md-1-line" md-ink-ripple role="link" ng-repeat="item in adminMenu">
 			<md-button class="md-primary" ng-click="showAdmin(item.name)">
 				<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
 				<span class="md-body-2">{{item.title}}</span>
@@ -40,43 +36,38 @@
 		</md-list-item>
 	</md-list>
 </md-sidenav>
-<div layout:fragment="content" layout="column" class="relative" layout-fill="" role="main"></div>
-<script type="text/javascript" src="/webjars/angular/1.5.3/angular.js" th:src="@{/webjars/angular/1.5.3/angular.js}"></script>
-<script type="text/javascript"
-        src="/webjars/angular-animate/1.5.3/angular-animate.js"
-        th:src="@{/webjars/angular-animate/1.5.3/angular-animate.js}"></script>
-<script type="text/javascript"
-        src="/webjars/angular-aria/1.5.3/angular-aria.js"
-        th:src="@{/webjars/angular-aria/1.5.3/angular-aria.js}"></script>
-<script type="text/javascript"
-        src="/webjars/angular-material/1.0.6/angular-material.js"
-        th:src="@{/webjars/angular-material/1.0.6/angular-material.js}"></script>
-<script type="text/javascript"
-        src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"
-        th:src="@{/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js}"></script>
-<script type="text/javascript"
-        src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"
-        th:src="@{/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js}"></script>
-<script type="text/javascript" src="/js/UserService.js" th:src="@{/js/UsersApp.js}"></script>
-<script type="text/javascript" src="/js/UserService.js" th:src="@{/js/UserService.js}"></script>
-<script type="text/javascript" src="/js/UserController.js" th:src="@{/js/UserController.js}"></script>
+<md-content layout-fill>
+	<ng-include src="activeContent" />
+</md-content>
+<script type="text/javascript" src="/webjars/moment/2.12.0/moment.js"></script>
+<script type="text/javascript" src="/webjars/angular/1.5.3/angular.js"></script>
+<script type="text/javascript" src="/webjars/angular-animate/1.5.3/angular-animate.js"></script>
+<script type="text/javascript" src="/webjars/angular-aria/1.5.3/angular-aria.js"></script>
+<script type="text/javascript" src="/webjars/angular-material/1.0.6/angular-material.js"></script>
+<script type="text/javascript" src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"></script>
+<script type="text/javascript" src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"></script>
+<script type="text/javascript" src="/js/UserApp.js"></script>
+<script type="text/javascript" src="/js/UserService.js"></script>
+<script type="text/javascript" src="/js/UserController.js"></script>
 <script type="application/javascript">
 	var app = angular.module('springDataRestDemo');
 	app.controller("AppCtrl", ["$scope", "$mdSidenav", '$window', function ($scope, $mdSidenav, $window) {
 		$scope.toggleSidenav = function (menuId) {
 			$mdSidenav(menuId).toggle();
 		};
+		$scope.activeContent = 'templates/users.html';
 		$scope.loadUsers = function () {
 			console.log('loadUsers');
-			$window.location.href = '/users';
+			// $window.location.href = '/users';
+			$scope.activeContent = 'templates/users.html';
 		}
 		$scope.loadGroups = function () {
 			console.log('loadGroups');
-			$window.location.href = '/groups';
+			// $window.location.href = '/groups';
 		}
 		$scope.loadMembers = function () {
 			console.log('loadMembers')
-			$window.location.href = '/members';
+			// $window.location.href = '/members';
 		}
 		$scope.mainMenu = [
 			{
@@ -98,8 +89,8 @@
 			}
 		]
 		$scope.adminMenu = [
-			{name: 'halBrower', title: 'HAL Browser', icon: 'social:ic_domain', href: '/admin/hal-browser'},
-			{name: 'h2Console', title: 'H2 Console', icon: 'action:ic_dashboard', href: '/admin/h2-console'}
+			{name: 'halBrower', title: 'HAL Browser', icon: 'social:ic_domain', href: '/admin/hal-browser', contentName: 'templates/hal-browser.html'},
+			{name: 'h2Console', title: 'H2 Console', icon: 'action:ic_dashboard', href: '/admin/h2-console', contentName: 'templates/h2-console.html'}
 		]
 
 		$scope.showAdmin = function (name) {
@@ -108,7 +99,8 @@
 				if (item.name == name) {
 					// var win = $window.open(item.href, '_blank');
 					// win.focus();
-					$window.location.href = item.href;
+					// $window.location.href = item.href;
+					$scope.activeContent = item.contentName;
 					return;
 				}
 			}
@@ -116,10 +108,16 @@
 		}
 	}]);
 	var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor'];
-	app.config(function ($mdThemingProvider, $mdIconProvider) {
+	app.config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider) {
+		$mdDateLocaleProvider.formatDate = function(date) {
+			return moment(date).format('YYYY-MM-DD');
+		};
 		$mdThemingProvider.theme("default")
 				.primaryPalette("blue")
 				.accentPalette("green");
+		$mdThemingProvider.theme("error")
+				.primaryPalette("red")
+				.accentPalette("brown");
 		$mdIconProvider.defaultIconSet("/iconsets/svg/content-icons.svg", 24);
 		for (var i in iconSets) {
 			var iconSet = iconSets[i];
@@ -127,6 +125,5 @@
 		}
 	});
 </script>
-<script layout:fragment="bootstrap"></script>
 </body>
 </html>

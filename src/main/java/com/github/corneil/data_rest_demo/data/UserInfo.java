@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "sd")
 @Data
 @EqualsAndHashCode(exclude = {"dateOfBirth", "emailAddress", "fullName", "id"})
 public class UserInfo {

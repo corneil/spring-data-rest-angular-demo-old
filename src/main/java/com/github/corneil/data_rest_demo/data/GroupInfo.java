@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "groups")
+@Table(name = "groups", schema = "sd")
 @Data
 @EqualsAndHashCode(exclude = {"groupOwner", "id"})
 public class GroupInfo {

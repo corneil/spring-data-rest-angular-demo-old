@@ -33,3 +33,10 @@ As a perfectly accurate UML component model this should have a lot more interfac
 A lot of the complexity has been collapse to show the essential relationships between the system components.
 
 image::src/docs/images/spring-data-rest-demo-components.png[Component Model]
+
+
+== ToDo
+* [ ] Delete User(s) with prompt indicating impact.
+* [ ] Validate User input in dialog
+* [ ] Delete Group(s) with prompt indicating impact.
+* [ ] Validate Group input

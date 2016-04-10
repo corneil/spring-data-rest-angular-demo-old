@@ -34,7 +34,7 @@ dependencyManagement {
     }
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
-        dependency 'org.webjars.bower:angular-material:1.0.6'
+        dependency 'org.webjars.bower:angular-material:1.0.7'
         dependency 'org.webjars.bower:angular-gravatar:0.4.1'
         dependency 'org.webjars:material-design-icons:2.2.0'
         dependency 'org.webjars.bower:moment:2.12.0'

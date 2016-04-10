@@ -5,7 +5,7 @@
 	<title>String Data Rest Angular Demo</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
-	<link rel="stylesheet" href="/webjars/angular-material/1.0.6/angular-material.css"/>
+	<link rel="stylesheet" href="/webjars/angular-material/1.0.7/angular-material.css"/>
 	<link rel="stylesheet" href="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.css"/>
 	<link rel="stylesheet" href="/css/app.css"></link>
 </head>
@@ -43,7 +43,7 @@
 <script type="text/javascript" src="/webjars/angular/1.5.3/angular.js"></script>
 <script type="text/javascript" src="/webjars/angular-animate/1.5.3/angular-animate.js"></script>
 <script type="text/javascript" src="/webjars/angular-aria/1.5.3/angular-aria.js"></script>
-<script type="text/javascript" src="/webjars/angular-material/1.0.6/angular-material.js"></script>
+<script type="text/javascript" src="/webjars/angular-material/1.0.7/angular-material.js"></script>
 <script type="text/javascript" src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"></script>
 <script type="text/javascript" src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"></script>
 <script type="text/javascript" src="/js/DataApp.js"></script>
@@ -103,6 +103,10 @@
 	app.config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider) {
 		$mdDateLocaleProvider.formatDate = function (date) {
 			return moment(date).format('YYYY-MM-DD');
+		};
+		$mdDateLocaleProvider.parseDate = function(dateString) {
+			var m = moment(dateString, ['YYYY-M-D','YYYY/M/D']);
+			return m.isValid() ? m.toDate() : new Date(NaN);
 		};
 		$mdThemingProvider.theme("default")
 				.primaryPalette("blue")

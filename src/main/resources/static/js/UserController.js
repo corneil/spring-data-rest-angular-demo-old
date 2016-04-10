@@ -5,7 +5,7 @@
 
         $scope.newUser = newUser;
         $scope.user = user;
-        $scope.dateOfBirth = !newUser && user.dateOfBirth ? moment(user.dateOfBirth).toDate() : null;
+        $scope.dateOfBirth = !newUser && user.dateOfBirth ? moment(user.dateOfBirth, 'YYYY-MM-DD').toDate() : null;
         $scope.dialogTitle = $scope.newUser ? 'Create User' : 'Edit User';
         $log.info('scope values init:' + $scope.newUuser + ':' + $scope.dialogTitle + ':' + $scope.dateOfBirth + ':' + $scope.user);
         $scope.cancel = function () {

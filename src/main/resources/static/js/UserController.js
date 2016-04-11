@@ -69,6 +69,7 @@
                     var user = $scope.selected[u];
                     userMessage = userMessage + ' ' + user.userId + ': ' + user.fullName;
                 }
+                // TODO refactor so that dialog shows progress and remains open until completion.
                 var confirm = $mdDialog.confirm()
                     .title('Do you want to delete users?')
                     .textContent(userMessage)

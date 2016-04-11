@@ -41,13 +41,15 @@
 </md-content>
 <script type="text/javascript" src="/webjars/moment/2.12.0/moment.js"></script>
 <script type="text/javascript" src="/webjars/angular/1.5.3/angular.js"></script>
+<script type="text/javascript" src="/webjars/angular-messages/1.5.3/angular-messages.js"></script>
 <script type="text/javascript" src="/webjars/angular-animate/1.5.3/angular-animate.js"></script>
 <script type="text/javascript" src="/webjars/angular-aria/1.5.3/angular-aria.js"></script>
 <script type="text/javascript" src="/webjars/angular-material/1.0.7/angular-material.js"></script>
 <script type="text/javascript" src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"></script>
 <script type="text/javascript" src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"></script>
 <script type="text/javascript" src="/js/DataApp.js"></script>
-<script type="text/javascript" src="/js/DataService.js"></script>
+<script type="text/javascript" src="/js/UserService.js"></script>
+<script type="text/javascript" src="/js/GroupService.js"></script>
 <script type="text/javascript" src="/js/UserController.js"></script>
 <script type="text/javascript" src="/js/GroupController.js"></script>
 <script type="application/javascript">
@@ -112,8 +114,8 @@
 				.primaryPalette("blue")
 				.accentPalette("green");
 		$mdThemingProvider.theme("error")
-				.primaryPalette("red")
-				.accentPalette("brown");
+				.primaryPalette("brown")
+				.accentPalette("red");
 		$mdIconProvider.defaultIconSet("/iconsets/svg/content-icons.svg", 24);
 		for (var i in iconSets) {
 			var iconSet = iconSets[i];

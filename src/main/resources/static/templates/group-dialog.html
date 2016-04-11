@@ -1,4 +1,4 @@
-<md-dialog aria-label="{{dialogTitle}}" ng-cloak>
+<md-dialog aria-label="{{dialogTitle}}" ng-cloak flex="30">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<h2>{{dialogTitle}}</h2>
@@ -9,30 +9,54 @@
 		</div>
 	</md-toolbar>
 	<md-dialog-content class="md-dialog-content">
-		<form name="userForm" ng-submit="save()">
+		<form name="groupForm" ng-submit="save()">
 			<div layout="column">
-				<md-input-container class="md-block">
+				<md-input-container class="md-block" md-is-error="groupForm.groupName.$touched && groupForm.groupName.$invalid">
 					<label>Group Name</label>
-					<input name="groupName" ng-disabled="!newGroup" ng-model="group.groupName" md-maxlength="32" required>
+					<input name="groupName"
+					       ng-disabled="!newGroup"
+					       ng-model="group.groupName"
+					       minlength="6"
+					       md-minlength="6"
+					       maxlength="32"
+					       md-maxlength="32"
+					       required>
+					<ng-messages for="groupForm.groupName.$error" role="alert" multiple>
+						<ng-message when="required">You must supply a group name.</ng-message>
+						<ng-message when="md-minlength, minlength">The group name is too short!.</ng-message>
+						<ng-message when="md-maxlength, maxlength">The group name is too long!.</ng-message>
+						<ng-message when="unique">The group name is not unique.</ng-message>
+					</ng-messages>
 				</md-input-container>
-				<md-input-container class="md-block">
+				<md-input-container class="md-block" md-is-error="groupForm.description.$touched && groupForm.description.$invalid">
 					<label>Description</label>
 					<input name="description" ng-model="group.description" required>
+					<ng-messages for="groupForm.description.$error" role="alert" multiple>
+						<ng-message when="required">You must supply a description.</ng-message>
+					</ng-messages>
 				</md-input-container>
-				<md-input-container class="md-block">
-					<md-select placeholder="Select group owner"
+				<md-input-container class="md-block" md-is-error="groupForm.groupOwner.$touched && groupForm.groupOwner.$invalid">
+					<md-select name="groupOwner"
+					           placeholder="Select group owner"
 					           ng-model="group.groupOwner"
 					           md-on-open="userPromise"
 					           required
 					           style="min-width: 200px;">
-						<md-option ng-value="user._links.self.href" ng-repeat="user in users">{{user.userId + ': ' + user.fullName}}</md-option>
+						<md-option ng-value="user._links.self.href" ng-repeat="user in users">{{user.userId + ': ' + user.fullName}}
+						</md-option>
 					</md-select>
+					<ng-messages for="groupForm.groupOwner.$error" role="alert" multiple>
+						<ng-message when="required">You must select a group owner.</ng-message>
+					</ng-messages>
 				</md-input-container>
 			</div>
 		</form>
+		<div class="validation-messages" ng-repeat="error in errorMessages">
+			<div>{{error}}</div>
+		</div>
 	</md-dialog-content>
 	<md-dialog-actions>
-		<md-button class="md-primary" ng-click="save()">Save</md-button>
+		<md-button class="md-primary" ng-disabled="groupForm.$invalid || !groupForm.$dirty" ng-click="save()">Save</md-button>
 		<md-button class="md-primary" ng-click="cancel()">Cancel</md-button>
 	</md-dialog-actions>
 </md-dialog>

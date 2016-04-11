@@ -28,19 +28,20 @@
                 $log.info('group=' + JSON.stringify(group));
                 $mdToast.show(
                     $mdToast.simple()
-                        .position({top: true, right: true})
+                        .position('bottom left')
+                        .parent(angular.element(document.body))
                         .textContent($scope.newGroup ? 'Group Created' : 'Group Saved')
                         .hideDelay(3000)
                 );
                 $mdDialog.hide(group);
             }, function (response) {
-                $log.error('Error response:' + response.status + ':' + response.statusText);
-                $mdToast.show(
-                    $mdToast.simple()
-                        .position({top: true, right: true})
-                        .textContent('Error:' + response.statusText)
-                        .hideDelay(7000).theme('error')
-                );
+                $log.error('Error response:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                if (response.status == 409 && response.statusText == 'Conflict') {
+                    $scope.groupForm.groupName.$setValidity('unique', false);
+                } else {
+                    var errorData = response.data;
+                    $scope.errorMessages.push(errorData.message);
+                }
             });
         };
     };

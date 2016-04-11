@@ -38,6 +38,6 @@ image::src/docs/images/spring-data-rest-demo-components.png[Component Model]
 
 == ToDo
 * [ ] Delete User(s) with prompt indicating impact.
-* [ ] Validate User input in dialog
+* [X] Validate User input in dialog
 * [ ] Delete Group(s) with prompt indicating impact.
-* [ ] Validate Group input
+* [X] Validate Group input

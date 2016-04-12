@@ -40,6 +40,18 @@ function loadGroupOwner(group, UserService, $log) {
                         });
                     return deferred.promise;
                 },
+                loadGroup: function(groupRef) {
+                    $log.debug('loadGroup:' + groupRef);
+                    var deferred = $q.defer();
+                    $http.get(groupRef).then(function (response) {
+                        $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                        deferred.resolve(response.data);
+                    }, function (response) {
+                        $log.warn('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                        deferred.reject(response);
+                    });
+                    return deferred.promise;
+                },
                 createGroup: function (group) {
                     var deferred = $q.defer();
                     $log.debug('creating:' + JSON.stringify(group));

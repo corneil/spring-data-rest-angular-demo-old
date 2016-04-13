@@ -11,7 +11,10 @@
 			           aria-label="Edit">
 				<md-icon md-svg-icon="editor:ic_mode_edit"></md-icon>
 			</md-button>
-			<md-button class="md-icon-button" aria-label="Delete" ng-click="deleteUsers($event)" ng-disabled="selected == null || selected.length.length == 0">
+			<md-button class="md-icon-button"
+			           aria-label="Delete"
+			           ng-click="deleteUsers($event)"
+			           ng-disabled="selected == null || selected.length.length == 0">
 				<md-icon md-svg-icon="action:ic_delete"></md-icon>
 			</md-button>
 		</div>
@@ -28,7 +31,7 @@
 			</thead>
 			<tbody md-body>
 			<tr md-row md-select="user" md-select-id="userId" md-auto-select="true" ng-repeat="user in users">
-				<td md-cell><img class="md-avatar" gravatar-src="user.emailAddress" gravatar-size="32"/></td>
+				<td md-cell><img class="md-avatar" src="/assets/users/{{user.userId}}.jpg" height="48px" width="36px"/></td>
 				<td md-cell><span>{{user.userId}}</span></td>
 				<td md-cell><span>{{ user.fullName }}</span></td>
 				<td md-cell><span>{{ user.emailAddress }}</span></td>

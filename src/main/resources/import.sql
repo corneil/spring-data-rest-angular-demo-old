@@ -18,8 +18,9 @@ insert into sd.groups(id, group_name, description, group_owner) values (3, 'sith
 insert into sd.groups(id, group_name, description, group_owner) values (4, 'empire', 'Galactic Empire', 5)
 insert into sd.groups(id, group_name, description, group_owner) values (5, 'mandalorians', 'Mandalorians', 6)
 insert into sd.groups(id, group_name, description, group_owner) values (6, 'rebels', 'Rebel Alliance', 8)
-insert into sd.groups(id, group_name, description, group_owner) values (7, 'naboo', 'Naboo Royal House', 8)
+insert into sd.groups(id, group_name, description, group_owner) values (7, 'naboo', 'Naboo Royal House', 5)
 insert into sd.groups(id, group_name, description, group_owner) values (8, 'republic', 'Old Republic', 5)
+insert into sd.groups(id, group_name, description, group_owner) values (9, 'resistance', 'Resistance', 8)
 
 -- Group Members
 insert into sd.group_members(member, member_ofgroup, enabled) values (1, 1, 1) -- yoda, jedi-knights

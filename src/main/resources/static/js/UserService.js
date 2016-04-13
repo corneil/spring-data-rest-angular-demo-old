@@ -1,6 +1,34 @@
 (function () {
     'use strict';
     angular.module('springDataRestDemo').service('UserService', ['$q', '$http', '$log', 'userCache', function ($q, $http, $log, userCache) {
+        function deleteGroupMembersForUser($q, $http, user, $log) {
+            var deleteDeferred = $q.defer();
+            $http.get('api/group-member/search/findByMember_UserId?userId='+user.userId).then(
+                function (response) {
+                    $log.debug('response received:' + response.status + ':' + response.statusText);
+                    var deletePromises = [];
+                    for (var i in response.data._embedded.groupMembers) {
+                        var groupMember = response.data._embedded.groupMembers[i];
+                        $log.debug('Deleting:' + groupMember._links.self.href);
+                        deletePromises.push($http.delete(groupMember._links.self.href,{}));
+                    }
+                    if (deletePromises.length != 0) {
+                        $q.all(deletePromises).then(function (data) {
+                            deleteDeferred.resolve(data);
+                        }, function (data) {
+                            deleteDeferred.reject(data);
+                        });
+                    } else {
+                        deleteDeferred.resolve(response);
+                    }
+                },
+                function (response) {
+                    $log.debug('response received:' + response.status + ':' + response.statusText);
+                    deleteDeferred.reject(response);
+                }
+            );
+            return deleteDeferred.promise;
+        }
 
         return {
             loadAllUsers: function () {
@@ -36,17 +64,23 @@
                 return deferred.promise;
             },
             deleteUser: function (user) {
+                var deletePromise = deleteGroupMembersForUser($q, $http, user, $log);
                 var deferred = $q.defer();
-                $log.debug('deleting :' + user._links.self.href);
-                $http.delete(user._links.self.href).then(
-                    function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
-                        userCache.removeAll();
-                        deferred.resolve(response);
-                    }, function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
-                        deferred.reject(response);
-                    });
+                deletePromise.then(function () {
+                    $log.debug('deleting :' + user._links.self.href);
+                    $http.delete(user._links.self.href,{}).then(
+                        function (response) {
+                            $log.debug('response received:' + response.status + ':' + response.statusText);
+                            userCache.removeAll();
+                            deferred.resolve(response);
+                        }, function (response) {
+                            $log.debug('response received:' + response.status + ':' + response.statusText);
+                            // TODO sanitise message to indicate reason
+                            deferred.reject(response);
+                        });
+                }, function (response) {
+                    deferred.reject(response);
+                });
                 return deferred.promise;
             },
             createUser: function (user) {

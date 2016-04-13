@@ -41,8 +41,8 @@
         };
     };
 
-    angular.module('springDataRestDemo').controller('UserController', ['UserService', '$scope', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
-        function (UserService, $scope, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
+    angular.module('springDataRestDemo').controller('UserController', ['UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
+        function (UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
             $scope.selected = [];
             $scope.userSelected = 0;
             $scope.users = [];
@@ -87,37 +87,47 @@
                     }
                     $q.all(promises).then(function (data) {
                         $log.info('Deletion completed:' + data);
+                        for (u in $scope.selected) {
+                            var user = $scope.selected[u];
+                            var index = $scope.users.indexOf(user);
+                            if(index >= 0) {
+                                $scope.users.splice(index, 1);
+                            } else {
+                                $log.warn('Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
+                            }
+                        }
+                        $scope.selected = [];
                     }, function (data) {
                         $log.error('Deletion incompleted:' + data);
                     });
                 }, function () {
                     $log.debug('Cancelled deletion');
                 });
-            },
-                $scope.editUser = function (ev) {
-                    $scope.selectedUser = $scope.selected[0];
-                    $log.info('edit user :' + $scope.selectedUser.userId);
-                    $mdDialog.show({
-                        parent: angular.element(document.body),
-                        controller: UserDialogController,
-                        templateUrl: 'templates/user-dialog.html',
-                        targetEvent: ev,
-                        bindToController: true,
-                        locals: {
-                            user: $scope.selectedUser,
-                            newUser: false
+            };
+            $scope.editUser = function (ev) {
+                $scope.selectedUser = $scope.selected[0];
+                $log.info('edit user :' + $scope.selectedUser.userId);
+                $mdDialog.show({
+                    parent: angular.element(document.body),
+                    controller: UserDialogController,
+                    templateUrl: 'templates/user-dialog.html',
+                    targetEvent: ev,
+                    bindToController: true,
+                    locals: {
+                        user: $scope.selectedUser,
+                        newUser: false
+                    }
+                }).then(function (user) {
+                    $log.info('updating user in array:' + JSON.stringify(user));
+                    $scope.selectedUser = user;
+                    for (var i in $scope.users) {
+                        var item = $scope.users[i];
+                        if (item.userId == user) {
+                            $scope.users[i] = user;
                         }
-                    }).then(function (user) {
-                        $log.info('updating user in array:' + JSON.stringify(user));
-                        $scope.selectedUser = user;
-                        for (var i in $scope.users) {
-                            var item = $scope.users[i];
-                            if (item.userId == user) {
-                                $scope.users[i] = user;
-                            }
-                        }
-                    });
-                };
+                    }
+                });
+            };
             $scope.addUser = function (ev) {
                 $scope.selectedUser = {fullName: '', userId: '', emailAddress: '', dateOfBirth: null};
                 $log.info('adding user');

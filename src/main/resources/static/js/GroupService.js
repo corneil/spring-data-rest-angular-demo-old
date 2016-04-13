@@ -83,6 +83,34 @@ function loadGroupOwner(group, UserService, $log) {
                             deferred.reject(response);
                         });
                     return deferred.promise;
+                },
+                deleteGroup:function(group) {
+                    var deleteDeferred = $q.defer();
+                    $http.post('/api/group-member/search/deleteByMemberOfgroup_GroupName', {groupName: group.groupName}).then(
+                        function (response) {
+                            $log.debug('response received:' + response.status + ':' + response.statusText);
+                            deleteDeferred.resolve(response);
+                        },
+                        function (response) {
+                            $log.debug('response received:' + response.status + ':' + response.statusText);
+                            deleteDeferred.reject(response);
+                        }
+                    );
+                    var deferred = $q.defer();
+                    deleteDeferred.promise.then(function () {
+                        $log.debug('deleting :' + group._links.self.href);
+                        $http.delete(group._links.self.href, {}).then(
+                            function (response) {
+                                $log.debug('response received:' + response.status + ':' + response.statusText);
+                                deferred.resolve(response);
+                            }, function (response) {
+                                $log.debug('response received:' + response.status + ':' + response.statusText);
+                                deferred.reject(response);
+                            });
+                    }, function(response) {
+                        deferred.reject(response);
+                    });
+                    return deferred.promise;
                 }
             };
         }]);

@@ -66,7 +66,7 @@
             deleteMember: function (member) {
                 var deferred = $q.defer();
                 $log.debug('deleting :' + member._links.self.href);
-                $http.delete(member._links.self.href).then(
+                $http.delete(member._links.self.href,{}).then(
                     function (response) {
                         $log.debug('response received:' + response.status + ':' + response.statusText);
                         deferred.resolve(response);

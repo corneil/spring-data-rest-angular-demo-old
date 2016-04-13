@@ -8,13 +8,18 @@
 	</md-toolbar>
 	<md-progress-linear ng-show="groups.length == 0" md-mode="indeterminate"></md-progress-linear>
 	<form name="memberForm">
-		<div flex-xs flex-gt-xs="50" layout="column">
-			<md-card ng-repeat="group in groups">
+		<div flex layout="row" layout-wrap>
+			<md-card ng-repeat="group in groups" flex="30">
 				<md-card-title>
 					<md-card-title-text>
-						<span class="md-headline">{{group.groupName}}</span>
-						<span class="md-subhead">{{group.description}}</span>
+						<span class="md-headline" ng-bind="group.groupName"></span>
+						<span class="md-subhead" ng-bind="group.description"></span>
 					</md-card-title-text>
+					<md-card-title-media class="md-media-xl card-media">
+						<div style="max-width: 48px">
+							<img src="/assets/svg/{{group.groupName}}.svg" width="100%" height="auto" aria-label="{{group.description}}" />
+						</div>
+					</md-card-title-media>
 				</md-card-title>
 				<md-card-content>
 					<md-chips ng-model="group.members"

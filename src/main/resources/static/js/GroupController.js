@@ -46,8 +46,8 @@
         };
     };
 
-    angular.module('springDataRestDemo').controller('GroupController', ['GroupService', 'UserService', '$scope', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
-        function (GroupService, UserService, $scope, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
+    angular.module('springDataRestDemo').controller('GroupController', ['GroupService', 'UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
+        function (GroupService, UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
             $scope.selected = [];
             $scope.groupSelected = 0;
             $scope.groups = [];
@@ -108,6 +108,38 @@
                     $scope.groups.push(group);
                 });
             };
+            $scope.deleteGroups = function (ev) {
+                var groupMessage = 'You have selected to delete:';
+                var u;
+                for (u in $scope.selected) {
+                    var user = $scope.selected[u];
+                    groupMessage = groupMessage + ' ' + user.groupName;
+                }
+                // TODO refactor so that dialog shows progress and remains open until completion.
+                var confirm = $mdDialog.confirm()
+                    .title('Do you want to delete groups?')
+                    .textContent(groupMessage)
+                    .ariaLabel('Delete Groups')
+                    .targetEvent(ev)
+                    .ok('Delete')
+                    .cancel('Cancel');
+                $mdDialog.show(confirm).then(function () {
+                    var promises = []
+                    for (u in $scope.selected) {
+                        var group = $scope.selected[u];
+                        $log.debug('Deleting:' + group.groupName);
+                        var promise = GroupService.deleteGroup(group);
+                        promises.push(promise);
+                    }
+                    $q.all(promises).then(function (data) {
+                        $log.info('Deletion completed:' + data);
+                    }, function (data) {
+                        $log.error('Deletion incompleted:' + data);
+                    });
+                }, function () {
+                    $log.debug('Cancelled deletion');
+                });
+            }
         }]);
 
 })();

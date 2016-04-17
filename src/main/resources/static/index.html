@@ -54,12 +54,16 @@
 <script type="text/javascript" src="/js/UserController.js"></script>
 <script type="text/javascript" src="/js/GroupController.js"></script>
 <script type="text/javascript" src="/js/MemberController.js"></script>
+<script type="text/javascript" src="/js/ThemeController.js"></script>
 <script type="application/javascript">
+	themeColours = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green'
+		, 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'];
 	var app = angular.module('springDataRestDemo');
 	app.controller("AppCtrl", ["$scope", "$mdSidenav", '$window', function ($scope, $mdSidenav, $window) {
 		$scope.toggleSidenav = function (menuId) {
 			$mdSidenav(menuId).toggle();
 		};
+
 		$scope.activeContent = 'templates/users.html';
 		$scope.mainMenu = [
 			{
@@ -81,6 +85,13 @@
 				icon: 'social:ic_person_add',
 				href: '/members',
 				templateName: 'templates/members.html'
+			},
+			{
+				name: 'themes',
+				title: 'Themes',
+				icon: 'image:ic_color_lens',
+				href: '/themes',
+				templateName: 'templates/themes.html'
 			}
 		];
 		$scope.adminMenu = [
@@ -103,21 +114,28 @@
 			$scope.activeContent = item.templateName;
 		}
 	}]);
-	var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor'];
+	var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor', 'image'];
 	app.config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider) {
 		$mdDateLocaleProvider.formatDate = function (date) {
 			return moment(date).format('YYYY-MM-DD');
 		};
-		$mdDateLocaleProvider.parseDate = function(dateString) {
-			var m = moment(dateString, ['YYYY-M-D','YYYY/M/D']);
+		$mdDateLocaleProvider.parseDate = function (dateString) {
+			var m = moment(dateString, ['YYYY-M-D', 'YYYY/M/D']);
 			return m.isValid() ? m.toDate() : new Date(NaN);
 		};
 		$mdThemingProvider.theme("default")
 				.primaryPalette("blue")
 				.accentPalette("green");
 		$mdThemingProvider.theme("error")
-				.primaryPalette("brown")
+				.primaryPalette("red")
 				.accentPalette("red");
+		for (var i in themeColours) {
+			var themeColour = themeColours[i];
+			$mdThemingProvider.theme(themeColour)
+					.primaryPalette(themeColour)
+					.accentPalette(themeColour);
+		}
+		$mdThemingProvider.alwaysWatchTheme(true);
 		$mdIconProvider.defaultIconSet("/iconsets/svg/content-icons.svg", 24);
 		for (var i in iconSets) {
 			var iconSet = iconSets[i];

@@ -31,7 +31,9 @@
 			</thead>
 			<tbody md-body>
 			<tr md-row md-select="user" md-select-id="userId" md-auto-select="true" ng-repeat="user in users">
-				<td md-cell><img class="md-avatar" src="/assets/users/{{user.userId}}.jpg" height="48px" width="36px"/></td>
+				<td md-cell>
+					<img class="md-avatar" src="/assets/users/{{user.userId}}.jpg" height="48px" width="36px"/>
+				</td>
 				<td md-cell><span>{{user.userId}}</span></td>
 				<td md-cell><span>{{ user.fullName }}</span></td>
 				<td md-cell><span>{{ user.emailAddress }}</span></td>

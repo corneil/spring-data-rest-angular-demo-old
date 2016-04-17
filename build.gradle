@@ -34,6 +34,10 @@ dependencyManagement {
     }
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
+        dependency 'org.webjars.bower:angular:1.5.3'
+        dependency 'org.webjars.bower:angular-animate:1.5.3'
+        dependency 'org.webjars.bower:angular-messages:1.5.3'
+        dependency 'org.webjars.bower:angular-aria:1.5.3'
         dependency 'org.webjars.bower:angular-material:1.0.7'
         dependency 'org.webjars.bower:angular-gravatar:0.4.1'
         dependency 'org.webjars:material-design-icons:2.2.0'
@@ -81,6 +85,10 @@ dependencies {
         exclude(module: 'xml-apis')
     }
     compile 'javax.el:javax.el-api'
+    webJarsBower 'org.webjars.bower:angular'
+    webJarsBower 'org.webjars.bower:angular-animate'
+    webJarsBower 'org.webjars.bower:angular-messages'
+    webJarsBower 'org.webjars.bower:angular-aria'
     webJarsBower 'org.webjars.bower:angular-material'
     webJarsBower 'org.webjars.bower:angular-gravatar'
     webJarsBower 'org.webjars.bower:angular-material-data-table'

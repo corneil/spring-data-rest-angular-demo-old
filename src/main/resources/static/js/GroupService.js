@@ -13,7 +13,7 @@ function loadGroupOwner(group, UserService, $log) {
 (function () {
     'use strict';
     angular.module('springDataRestDemo')
-        .service('GroupService', ['$q', '$http', '$log', 'UserService', function ($q, $http, $log, UserService) {
+        .service('GroupService', ['$q', '$http', '$log', 'UserService', 'groupCache', function ($q, $http, $log, UserService, groupCache) {
 
             return {
                 loadAllGroups: function () {
@@ -43,13 +43,19 @@ function loadGroupOwner(group, UserService, $log) {
                 loadGroup: function(groupRef) {
                     $log.debug('loadGroup:' + groupRef);
                     var deferred = $q.defer();
-                    $http.get(groupRef).then(function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                        deferred.resolve(response.data);
-                    }, function (response) {
-                        $log.warn('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                        deferred.reject(response);
-                    });
+                    var group = groupCache.get(groupRef);
+                    if (group != undefined) {
+                        deferred.resolve(group);
+                    } else {
+                        $http.get(groupRef).then(function (response) {
+                            $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                            groupCache.put(groupRef, response.data);
+                            deferred.resolve(response.data);
+                        }, function (response) {
+                            $log.warn('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                            deferred.reject(response);
+                        });
+                    }
                     return deferred.promise;
                 },
                 createGroup: function (group) {
@@ -61,6 +67,7 @@ function loadGroupOwner(group, UserService, $log) {
                             $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
                             response.data._groupOwner = savedOwner;
                             response,data.groupOwner = savedOwner._links.self.href;
+                            groupCache.put(response.data._links.self.href, response.data);
                             deferred.resolve(response.data);
                         },
                         function (response) {
@@ -76,6 +83,7 @@ function loadGroupOwner(group, UserService, $log) {
                     $http.put(group._links.self.href, group).then(
                         function (response) {
                             $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                            groupCache.put(response.data._links.self.href, response.data);
                             deferred.resolve(response.data);
                         },
                         function (response) {
@@ -102,6 +110,7 @@ function loadGroupOwner(group, UserService, $log) {
                         $http.delete(group._links.self.href, {}).then(
                             function (response) {
                                 $log.debug('response received:' + response.status + ':' + response.statusText);
+                                groupCache.remove(group._links.self.href);
                                 deferred.resolve(response);
                             }, function (response) {
                                 $log.debug('response received:' + response.status + ':' + response.statusText);

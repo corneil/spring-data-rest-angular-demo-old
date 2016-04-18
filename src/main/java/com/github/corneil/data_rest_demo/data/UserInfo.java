@@ -1,8 +1,6 @@
 package com.github.corneil.data_rest_demo.data;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -17,8 +15,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "users", schema = "sd")
-@Data
-@EqualsAndHashCode(exclude = {"dateOfBirth", "emailAddress", "fullName", "id"})
 public class UserInfo {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(style = "M-")
@@ -40,5 +36,48 @@ public class UserInfo {
         super();
         this.userId = userId;
         this.fullName = fullName;
+    }
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+    public String getFullName() {
+        return fullName;
+    }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    @Override
+    public int hashCode() {
+        return userId != null ? userId.hashCode() : 0;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        UserInfo userInfo = (UserInfo) o;
+        return userId != null ? userId.equals(userInfo.userId) : userInfo.userId == null;
     }
 }

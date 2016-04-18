@@ -3,7 +3,7 @@
     angular.module('springDataRestDemo').service('MemberService', ['$q', '$http', '$log', 'UserService', 'GroupService', function ($q, $http, $log, UserService, GroupService) {
         function loadGroupMembers(groupMap, member, UserService, GroupService, $log, $q) {
             var deferred = $q.defer();
-            var groupPromise = GroupService.loadGroup(member._links.memberOfgroup.href);
+            var groupPromise = GroupService.loadGroup(member._links._memberOfgroup.href);
             groupPromise.then(function (group) {
                 var groupInfo = {};
                 if (!(group.groupName in groupMap)) {
@@ -21,7 +21,7 @@
                     groupInfo = groupMap[group.groupName];
                     $log.debug('found:' + JSON.stringify(groupInfo, null, 2));
                 }
-                var userPromise = UserService.loadUser(member._links.member.href);
+                var userPromise = UserService.loadUser(member._links._member.href);
                 userPromise.then(
                     function (user) {
                         groupInfo.members.push(makeMember(user, member));

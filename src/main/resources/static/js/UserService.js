@@ -71,7 +71,7 @@
                     $http.delete(user._links.self.href,{}).then(
                         function (response) {
                             $log.debug('response received:' + response.status + ':' + response.statusText);
-                            userCache.removeAll();
+                            userCache.remove(user._links.self.href);
                             deferred.resolve(response);
                         }, function (response) {
                             $log.debug('response received:' + response.status + ':' + response.statusText);
@@ -89,7 +89,7 @@
                 $http.post('/api/users', user).then(
                     function (response) {
                         $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                        userCache.removeAll();
+                        userCache.put(response.data._links.self.href, response.data);
                         deferred.resolve(response.data);
                     },
                     function (response) {
@@ -104,8 +104,8 @@
                 $http.put(user._links.self.href, user).then(
                     function (response) {
                         $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                        userCache.put(response.data._links.self.href, response.data);
                         deferred.resolve(response.data);
-                        userCache.removeAll();
                     },
                     function (response) {
                         $log.warn('response received:' + response.status + ':' + response.statusText);

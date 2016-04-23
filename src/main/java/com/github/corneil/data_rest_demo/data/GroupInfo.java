@@ -18,7 +18,7 @@ public class GroupInfo {
     @Column(unique = true)
     private String groupName;
     @NotNull
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     private UserInfo groupOwner;
     @Id
     @GeneratedValue

@@ -1,122 +1,145 @@
-function loadGroupOwner(group, UserService, $log) {
-    var promise = UserService.loadUser(group._links.groupOwner.href);
+function loadGroupOwner(group, UserService, $q, $log) {
+    var deferred = $q.defer();
+    var promise = UserService.loadUser(group._links._groupOwner.href);
     promise.then(function (user) {
-        $log.debug('GroupServer.loadAllGroups.groupOwner.loaded:' + group.groupName + ':' + user.userId);
+        $log.debug('GroupService.loadAllGroups.groupOwner.loaded:' + group.groupName + ':' + user.userId);
         group._groupOwner = user;
         group.groupOwner = user._links.self.href;
+        deferred.resolve(group);
     }, function (response) {
-        $log.debug('error:response:' + JSON.stringify(response));
+        $log.error('loadGroupOwner:failure:response:' + JSON.stringify(response, null, 2));
         group._groupOwner = undefined;
+        deferred.reject(response);
     });
-    return promise;
+    return deferred.promise;
 }
 (function () {
     'use strict';
     angular.module('springDataRestDemo')
-        .service('GroupService', ['$q', '$http', '$log', 'UserService', 'groupCache', function ($q, $http, $log, UserService, groupCache) {
+        .service('GroupService', ['$q', '$resource', '$log', 'UserService', 'groupCache', function ($q, $resource, $log, UserService, groupCache) {
+            var Groups = $resource('/api/groups', {}, {
+                list: {method: 'GET'},
+                create: {method: 'POST'}
+            });
+            function deleteGroupMember(groupMemberRef) {
+                $log.debug('deleteGroupMember:' + groupMemberRef);
+                return $resource(groupMemberRef).delete().$promise;
+            }
+            function deleteMembersForGroup(group) {
+                var deferred = $q.defer();
+                var promises = [];
+                var GroupMembers = $resource('/api/group-member/search/findByMemberOfgroup_GroupName?groupName=:groupName', {groupName: '@groupName'});
+                GroupMembers.get({groupName: group.groupName}).$promise.then(
+                    function (groups) {
+                        $log.debug('deleteMembersForGroup:find:' + JSON.stringify(groups,null,2));
+                        for (var i in groups._embedded.groupMembers) {
+                            var groupMember = groups._embedded.groupMembers[i];
+                            promises.push(deleteGroupMember(groups._embedded.groupMembers[i]._links.self.href));
+                        }
+                        $q.all(promises).then(function (data) {
+                            deferred.resolve(data);
+                        }, function (response) {
+                            $log.error('deleteMembersForGroup:failure:response:' + JSON.stringify(response, null, 2));
+                            deferred.reject(response);
+                        });
+                    }, function (response) {
+                        $log.error('deleteMembersForGroup:failure:response:' + JSON.stringify(response, null, 2));
+                        deferred.reject(response);
+                    }
+                );
+                return deferred.promise;
+            }
 
             return {
                 loadAllGroups: function () {
                     var deferred = $q.defer();
                     $log.debug('calling /api/groups');
-                    $http.get('/api/groups').then(
-                        function (response) {
-                            $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                            var groups = response.data._embedded.groups;
+                    Groups.list().$promise.then(
+                        function (groups) {
+                            var groups = groups._embedded.groups;
                             var promises = [];
                             for (var g in groups) {
-                                promises.push(loadGroupOwner(groups[g], UserService, $log));
+                                promises.push(loadGroupOwner(groups[g], UserService, $q, $log));
                             }
-                            $q.all(promises).then(function (data) {
-                                $log.debug('all.then:' + JSON.stringify(data));
+                            $q.all(promises).then(function () {
                                 deferred.resolve(groups);
                             }, function (response) {
+                                $log.error('loadAllGroups:failure:response:' + JSON.stringify(response, null, 2));
                                 deferred.reject(response);
                             });
                         },
                         function (response) {
-                            $log.warn('response received:' + response.status + ':' + response.statusText);
+                            $log.error('loadAllGroups:failure:response:' + JSON.stringify(response, null, 2));
                             deferred.reject(response);
                         });
                     return deferred.promise;
                 },
-                loadGroup: function(groupRef) {
+                loadGroup: function (groupRef) {
                     $log.debug('loadGroup:' + groupRef);
                     var deferred = $q.defer();
-                    var group = groupCache.get(groupRef);
-                    if (group != undefined) {
-                        deferred.resolve(group);
-                    } else {
-                        $http.get(groupRef).then(function (response) {
-                            $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                            groupCache.put(groupRef, response.data);
-                            deferred.resolve(response.data);
+                    var Group = $resource(groupRef, {}, {get: {method: 'GET', cache: groupCache}});
+                    Group.get().$promise.then(
+                        function (group) {
+                            loadGroupOwner(group, UserService, $q, $log).then(
+                                function (g) {
+                                    deferred.resolve(g);
+                                }, function (response) {
+                                    deferred.reject(response);
+                                });
                         }, function (response) {
-                            $log.warn('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                            $log.error('loadGroup:failure:response:' + JSON.stringify(response, null, 2));
                             deferred.reject(response);
-                        });
-                    }
+                        }
+                    );
                     return deferred.promise;
                 },
                 createGroup: function (group) {
                     var deferred = $q.defer();
                     $log.debug('creating:' + JSON.stringify(group));
                     $log.debug('calling /api/groups');
-                    $http.post('/api/groups', group).then(
-                        function (response) {
-                            $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                            response.data._groupOwner = savedOwner;
-                            response,data.groupOwner = savedOwner._links.self.href;
-                            groupCache.put(response.data._links.self.href, response.data);
-                            deferred.resolve(response.data);
+                    var savedOwner = group._groupOwner;
+                    Groups.create(group).$promise.then(
+                        function (group) {
+                            group._groupOwner = savedOwner;
+                            group.groupOwner = savedOwner._links.self.href;
+                            deferred.resolve(group);
                         },
                         function (response) {
-                            $log.warn('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
+                            $log.error('createGroup:failure:response:' + JSON.stringify(response, null, 2));
                             deferred.reject(response);
                         });
                     return deferred.promise;
                 },
                 saveGroup: function (group) {
                     var deferred = $q.defer();
-                    $log.debug('saving:' + JSON.stringify(group));
-                    $log.debug('PUT -> ' + ':' + group._links.self.href);
-                    $http.put(group._links.self.href, group).then(
-                        function (response) {
-                            $log.debug('response received:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
-                            groupCache.put(response.data._links.self.href, response.data);
-                            deferred.resolve(response.data);
+                    $log.debug('saving:' + JSON.stringify(group, null, 2));
+                    var Group = $resource(group._links.self.href, {}, {save: {method: 'PUT'}});
+                    Group.save(group).$promise.then(
+                        function (saved) {
+                            groupCache.remove(saved._links.self.href);
+                            deferred.resolve(saved);
                         },
                         function (response) {
-                            $log.warn('response received:' + response.status + ':' + response.statusText);
+                            $log.error('saveGroup:failure:response:' + JSON.stringify(response, null, 2));
                             deferred.reject(response);
                         });
                     return deferred.promise;
                 },
-                deleteGroup:function(group) {
-                    var deleteDeferred = $q.defer();
-                    $http.post('/api/group-member/search/deleteByMemberOfgroup_GroupName', {groupName: group.groupName}).then(
-                        function (response) {
-                            $log.debug('response received:' + response.status + ':' + response.statusText);
-                            deleteDeferred.resolve(response);
-                        },
-                        function (response) {
-                            $log.debug('response received:' + response.status + ':' + response.statusText);
-                            deleteDeferred.reject(response);
-                        }
-                    );
+                deleteGroup: function (group) {
                     var deferred = $q.defer();
-                    deleteDeferred.promise.then(function () {
+                    deleteMembersForGroup(group).then(function () {
                         $log.debug('deleting :' + group._links.self.href);
-                        $http.delete(group._links.self.href, {}).then(
+                        var Group = $resource(group._links.self.href);
+                        Group.delete().$promise.then(
                             function (response) {
-                                $log.debug('response received:' + response.status + ':' + response.statusText);
                                 groupCache.remove(group._links.self.href);
                                 deferred.resolve(response);
                             }, function (response) {
-                                $log.debug('response received:' + response.status + ':' + response.statusText);
+                                $log.error('deleteGroup:failure:response:' + JSON.stringify(response, null, 2));
                                 deferred.reject(response);
                             });
-                    }, function(response) {
+                    }, function (response) {
+                        $log.error('deleteGroup:failure:response:' + JSON.stringify(response, null, 2));
                         deferred.reject(response);
                     });
                     return deferred.promise;

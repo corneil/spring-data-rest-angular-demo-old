@@ -46,8 +46,8 @@
         };
     };
 
-    angular.module('springDataRestDemo').controller('GroupController', ['GroupService', 'UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
-        function (GroupService, UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
+    angular.module('springDataRestDemo').controller('GroupController', ['GroupService', 'UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdToast', '$log',
+        function (GroupService, UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdToast, $log) {
             $scope.selected = [];
             $scope.groupSelected = 0;
             $scope.groups = [];
@@ -62,7 +62,9 @@
             }, function (response) {
                 $log.error('Error response:' + response.status + ':' + response.statusText);
             });
-
+            $scope.openSidenav = function () {
+                $mdSidenav('sideNav').open();
+            };
             $scope.editGroup = function (ev) {
                 $scope.selectedGroup = $scope.selected[0];
                 $log.info('edit group :' + $scope.selectedGroup.groupName);
@@ -133,8 +135,31 @@
                     }
                     $q.all(promises).then(function (data) {
                         $log.info('Deletion completed:' + data);
+                        var deleteCount = $scope.selected.length;
+                        for (u in $scope.selected) {
+                            var group = $scope.selected[u];
+                            var rg = $scope.groups.indexOf(group);
+                            invariant(rg >= 0, 'Expected group index in groups');
+                            $scope.groups.splice(rg, 1);
+                        }
+                        $scope.selected = [];
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .parent(angular.element(document.body))
+                                .position('bottom left')
+                                .textContent('Deleted ' + deleteCount + ' Groups')
+                                .hideDelay(3000)
+                        );
                     }, function (data) {
-                        $log.error('Deletion incompleted:' + data);
+                        $log.error('Deletion incompleted:' + JSON.stringify(data));
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .parent(angular.element(document.body))
+                                .position('bottom left')
+                                .theme('error')
+                                .textContent('Deletion incompleted: ' + data.statusLine)
+                                .action('Close')
+                        );
                     });
                 }, function () {
                     $log.debug('Cancelled deletion');

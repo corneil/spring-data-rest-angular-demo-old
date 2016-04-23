@@ -1,9 +1,12 @@
 <md-content ng-controller="UserController" layout="column" flex class="relative" layout-fill role="main">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<md-button class="md-icon-button" aria-label="Settings" ng-disabled="true">
-				<md-icon md-svg-icon="navigation:ic_menu" arial-label="Menu"></md-icon>
+			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
+				<md-icon md-svg-icon="navigation:ic_menu"></md-icon>
 			</md-button>
+			<h3>
+				<span>Users</span>
+			</h3>
 			<span flex></span>
 			<md-button class="md-icon-button"
 			           ng-disabled="selected == null || selected.length != 1"
@@ -19,28 +22,25 @@
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-table-container>
-		<table md-table md-row-select="true" data-ng-model="selected" multiple="true" md-progress="promise">
-			<thead md-head md-order="userOrder">
-			<tr md-row>
-				<th md-column md-order-by="userId">Avatar</th>
-				<th md-column md-order-by="userId">User Id</th>
-				<th md-column md-order-by="fullName">Full name</th>
-				<th md-column md-order-by="emailAddress">Email</th>
-			</tr>
-			</thead>
-			<tbody md-body>
-			<tr md-row md-select="user" md-select-id="userId" md-auto-select="true" ng-repeat="user in users">
-				<td md-cell>
-					<img class="md-avatar" src="/assets/users/{{user.userId}}.jpg" height="48px" width="36px"/>
-				</td>
-				<td md-cell><span>{{user.userId}}</span></td>
-				<td md-cell><span>{{ user.fullName }}</span></td>
-				<td md-cell><span>{{ user.emailAddress }}</span></td>
-			</tr>
-			</tbody>
-		</table>
-	</md-table-container>
+	<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="4" md-row-height="16:9" md-gutter="4px" md-gutter-gt-sm="2px">
+		<md-grid-tile ng-repeat="user in users" layouy="column" layout-align="start start">
+			<md-grid-tile-header><h3>{{user.userId}}: {{user.fullName}}</h3></md-grid-tile-header>
+			<div layout="row" layout-align="start start" flex>
+				<md-button class="md-fab md-primary" layout="column" layout-align="center center">
+					<img class="md-avatar" src="/assets/users/{{user.userId}}.png" height="48px" width="48px" aria-label="Avatar for {{user.userId}}"/>
+				</md-button>
+				<div layout="column" flex>
+					<span>{{user.emailAddress}}</span>
+					<span>{{user.dateOfBirth}}</span>
+				</div>
+			</div>
+			<md-grid-tile-footer>
+				<md-button class="md-primary">
+					<span>Edit</span>
+				</md-button>
+			</md-grid-tile-footer>
+		</md-grid-tile>
+	</md-grid-list>
 	<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="addUser($event)">
 		<md-icon md-svg-icon="content:ic_add"></md-icon>
 	</md-button>

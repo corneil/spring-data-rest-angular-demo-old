@@ -35,6 +35,7 @@ dependencyManagement {
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
         dependency 'org.webjars.bower:angular:1.5.3'
+        dependency 'org.webjars.bower:angular-resource:1.5.3'
         dependency 'org.webjars.bower:angular-animate:1.5.3'
         dependency 'org.webjars.bower:angular-messages:1.5.3'
         dependency 'org.webjars.bower:angular-aria:1.5.3'
@@ -86,6 +87,7 @@ dependencies {
     }
     compile 'javax.el:javax.el-api'
     webJarsBower 'org.webjars.bower:angular'
+    webJarsBower 'org.webjars.bower:angular-resource'
     webJarsBower 'org.webjars.bower:angular-animate'
     webJarsBower 'org.webjars.bower:angular-messages'
     webJarsBower 'org.webjars.bower:angular-aria'
@@ -93,6 +95,7 @@ dependencies {
     webJarsBower 'org.webjars.bower:angular-gravatar'
     webJarsBower 'org.webjars.bower:angular-material-data-table'
     webJarsBower 'org.webjars.bower:moment'
+
     svgIcons 'org.webjars:material-design-icons'
     runtime 'com.h2database:h2'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

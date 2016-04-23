@@ -28,9 +28,27 @@ public class CustomRepositoryConfiguration {
             return resource;
         }
     }
+
+    private static class GroupResourceProcessor implements ResourceProcessor<Resource<GroupInfo>> {
+        public GroupResourceProcessor(EntityLinks entityLinks) {
+            this.entityLinks = entityLinks;
+        }
+        protected EntityLinks entityLinks;
+        @Override
+        public Resource<GroupInfo> process(Resource<GroupInfo> resource) {
+            resource.add(entityLinks.linkForSingleResource(UserInfo.class, resource.getContent().getGroupOwner().getId())
+                                    .withRel("_groupOwner"));
+            return resource;
+        }
+    }
     @Bean
     @Autowired
     public ResourceProcessor<Resource<GroupMember>> memberProcessor(EntityLinks entityLinks) {
         return new GroupMemberResourceProcessor(entityLinks);
+    }
+    @Bean
+    @Autowired
+    public ResourceProcessor<Resource<GroupInfo>> groupProcessor(EntityLinks entityLinks) {
+        return new GroupResourceProcessor(entityLinks);
     }
 }

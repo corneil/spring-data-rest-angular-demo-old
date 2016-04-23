@@ -9,9 +9,12 @@
 	<link rel="stylesheet" href="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.css"/>
 	<link rel="stylesheet" href="/css/app.css"></link>
 </head>
-<body ng-app="springDataRestDemo" ng-controller="AppCtrl" layout="row" ng-cloak>
-<md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+<body ng-app="springDataRestDemo" ng-controller="NavController" layout="row" ng-cloak>
+<md-sidenav md-component-id="sideNav" layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" ng-cloak>
 	<md-toolbar class="md-tall md-hue-2">
+		<md-button class="md-icon-button" aria-label="Close Sidenav" ng-click="closeSidenav()">
+			<md-icon md-svg-icon="navigation:ic_close"></md-icon>
+		</md-button>
 		<span flex></span>
 		<div layout="column" class="md-toolbar-tools-bottom inset">
 			<div>Spring Data Rest Demo</div>
@@ -41,13 +44,16 @@
 </md-content>
 <script type="text/javascript" src="/webjars/moment/2.12.0/moment.js"></script>
 <script type="text/javascript" src="/webjars/angular/1.5.3/angular.js"></script>
+<script type="text/javascript" src="/webjars/angular-resource/1.5.3/angular-resource.js"></script>
 <script type="text/javascript" src="/webjars/angular-messages/1.5.3/angular-messages.js"></script>
 <script type="text/javascript" src="/webjars/angular-animate/1.5.3/angular-animate.js"></script>
 <script type="text/javascript" src="/webjars/angular-aria/1.5.3/angular-aria.js"></script>
 <script type="text/javascript" src="/webjars/angular-material/1.0.7/angular-material.js"></script>
 <script type="text/javascript" src="/webjars/angular-gravatar/0.4.1/build/angular-gravatar.js"></script>
 <script type="text/javascript" src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"></script>
+<script type="text/javascript" src="/js/invariant.js"></script>
 <script type="text/javascript" src="/js/DataApp.js"></script>
+<script type="text/javascript" src="/js/NavController.js"></script>
 <script type="text/javascript" src="/js/UserService.js"></script>
 <script type="text/javascript" src="/js/GroupService.js"></script>
 <script type="text/javascript" src="/js/MemberService.js"></script>
@@ -56,66 +62,8 @@
 <script type="text/javascript" src="/js/MemberController.js"></script>
 <script type="text/javascript" src="/js/ThemeController.js"></script>
 <script type="application/javascript">
-	themeColours = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green'
-		, 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'];
-	var app = angular.module('springDataRestDemo');
-	app.controller("AppCtrl", ["$scope", "$mdSidenav", '$window', function ($scope, $mdSidenav, $window) {
-		$scope.toggleSidenav = function (menuId) {
-			$mdSidenav(menuId).toggle();
-		};
-
-		$scope.activeContent = 'templates/users.html';
-		$scope.mainMenu = [
-			{
-				name: 'users', title: 'Users',
-				icon: 'social:ic_person',
-				href: '/users',
-				templateName: 'templates/users.html'
-			},
-			{
-				name: 'groups',
-				title: 'Groups',
-				icon: 'social:ic_people',
-				href: '/groups',
-				templateName: 'templates/groups.html'
-			},
-			{
-				name: 'members',
-				title: 'Members',
-				icon: 'social:ic_person_add',
-				href: '/members',
-				templateName: 'templates/members.html'
-			},
-			{
-				name: 'themes',
-				title: 'Themes',
-				icon: 'image:ic_color_lens',
-				href: '/themes',
-				templateName: 'templates/themes.html'
-			}
-		];
-		$scope.adminMenu = [
-			{
-				name: 'halBrower',
-				title: 'HAL Browser',
-				icon: 'social:ic_domain',
-				href: '/admin/hal-browser',
-				templateName: 'templates/hal-browser.html'
-			},
-			{
-				name: 'h2Console',
-				title: 'H2 Console',
-				icon: 'action:ic_dashboard',
-				href: '/admin/h2-console',
-				templateName: 'templates/h2-console.html'
-			}
-		];
-		$scope.showMenu = function (item) {
-			$scope.activeContent = item.templateName;
-		}
-	}]);
-	var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor', 'image'];
-	app.config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider) {
+	angular.module('springDataRestDemo').config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider, $mdColorPalette) {
+		// Date configuration
 		$mdDateLocaleProvider.formatDate = function (date) {
 			return moment(date).format('YYYY-MM-DD');
 		};
@@ -123,20 +71,33 @@
 			var m = moment(dateString, ['YYYY-M-D', 'YYYY/M/D']);
 			return m.isValid() ? m.toDate() : new Date(NaN);
 		};
+		// Theme configuration
 		$mdThemingProvider.theme("default")
-				.primaryPalette("blue")
-				.accentPalette("green");
+				.primaryPalette("indigo")
+				.accentPalette("blue")
+				.backgroundPalette('light-blue');
 		$mdThemingProvider.theme("error")
 				.primaryPalette("red")
-				.accentPalette("red");
+				.accentPalette("yellow");
+
+		// var themeColours = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'];
+		var themeColours = Object.keys($mdColorPalette);
+		var prevColour = themeColours[themeColours.length - 1];
+		var prevPrevColour = themeColours[themeColours.length - 2];
 		for (var i in themeColours) {
 			var themeColour = themeColours[i];
 			$mdThemingProvider.theme(themeColour)
 					.primaryPalette(themeColour)
-					.accentPalette(themeColour);
+					.accentPalette(prevColour)
+					.backgroundPalette(prevPrevColour);
+			prevPrevColour = prevColour;
+			prevColour = themeColour;
+
 		}
 		$mdThemingProvider.alwaysWatchTheme(true);
+		// Icon configuration
 		$mdIconProvider.defaultIconSet("/iconsets/svg/content-icons.svg", 24);
+		var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor', 'image'];
 		for (var i in iconSets) {
 			var iconSet = iconSets[i];
 			$mdIconProvider.iconSet(iconSet, '/iconsets/svg/' + iconSet + '-icons.svg', 24);

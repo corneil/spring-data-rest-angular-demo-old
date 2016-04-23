@@ -1,5 +1,6 @@
 package com.github.corneil.data_rest_demo.data;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,10 +17,10 @@ public class GroupMember {
     @GeneratedValue
     private Long id;
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH})
     private UserInfo member;
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH})
     private GroupInfo memberOfgroup;
     public GroupMember() {
         super();

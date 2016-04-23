@@ -1,7 +1,7 @@
 (function () {
     'use strict';
-    angular.module('springDataRestDemo').controller('MemberController', ['MemberService', 'UserService', '$scope', '$q', '$mdMedia', '$mdDialog', '$log',
-        function (MemberService, UserService, $scope, $q, $mdMedia, $mdDialog, $log) {
+    angular.module('springDataRestDemo').controller('MemberController', ['MemberService', 'UserService', '$scope', '$q', '$mdSidenav', '$mdMedia', '$mdDialog', '$log',
+        function (MemberService, UserService, $scope, $q, $mdSidenav, $mdMedia, $mdDialog, $log) {
             function saveNewMember(member, group, MemberService) {
                 var newMember = {enabled: true, member: member.href, memberOfgroup: group.href};
                 var createDeferred = $q.defer();
@@ -24,9 +24,9 @@
                 }
                 return false;
             }
-
             $scope.groups = [];
             $scope.promise = null;
+            $scope.selectedGroup = null;
             $scope.selectedMember = null;
             $scope.searchMember = null;
             $scope.promise = MemberService.combineMembers();
@@ -53,6 +53,9 @@
             $scope.transformMember = function (input) {
                 return MemberService.makeMember(input, null);
             };
+            $scope.selectGroup = function(group) {
+                $scope.selectedGroup = group;
+            }
             $scope.removeMember = function (group, member) {
                 $log.debug('removeMember:member=' + JSON.stringify(member, null, 2));
                 $log.debug('removeMember:group=' + JSON.stringify(group, null, 2));
@@ -126,6 +129,9 @@
                 }
                 $log.debug('queryMemberSearch:result=' + result.length);
                 return result;
-            }
+            };
+            $scope.openSidenav = function () {
+                $mdSidenav('sideNav').open();
+            };
         }]);
 })();

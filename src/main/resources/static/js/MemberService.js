@@ -16,10 +16,10 @@
                         _removed: []
                     };
                     groupMap[group.groupName] = groupInfo;
-                    $log.debug('creating:' + JSON.stringify(groupInfo, null, 2));
+                    $log.debug('loaded:' + groupInfo.groupName);
                 } else {
                     groupInfo = groupMap[group.groupName];
-                    $log.debug('found:' + JSON.stringify(groupInfo, null, 2));
+                    $log.debug('found:' + groupInfo.groupName);
                 }
                 var userPromise = UserService.loadUser(member._links._member.href);
                 userPromise.then(
@@ -68,10 +68,9 @@
                 $log.debug('deleting :' + member._links.self.href);
                 $http.delete(member._links.self.href,{}).then(
                     function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
                         deferred.resolve(response);
                     }, function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
+                        $log.error('deleteMember:failed:' + JSON.stringify(response,null,2));
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -81,10 +80,9 @@
                 $log.debug('saving:' + JSON.stringify(member, null, 2));
                 $http.put(member._links.self.href, member).then(
                     function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
                         deferred.resolve(response);
                     }, function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
+                        $log.error('saveMember:failed:' + JSON.stringify(response,null,2));
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -94,10 +92,9 @@
                 $log.debug('creating:' + JSON.stringify(member, null, 2));
                 $http.post('/api/group-member', member).then(
                     function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
                         deferred.resolve(response);
                     }, function (response) {
-                        $log.debug('response received:' + response.status + ':' + response.statusText);
+                        $log.error('createMember:failed:' + JSON.stringify(response,null,2));
                         deferred.reject(response);
                     });
                 return deferred.promise;
@@ -113,24 +110,23 @@
                         if (member.enabled) {
                             promises.push(loadGroupMembers(groupMap, member, UserService, GroupService, $log, $q));
                         } else {
-                            $log.debug("skipping member:" + JSON.stringify(member));
+                            $log.debug("skipping member:not enabled:" + JSON.stringify(member));
                         }
                     }
                     $q.all(promises).then(function (data) {
-                        $log.debug('all.then:' + JSON.stringify(data));
                         var groups = [];
                         var keys = Object.keys(groupMap);
                         for (var k in keys) {
                             var group = groupMap[keys[k]];
-                            $log.debug('groupInfo:' + k + ':' + JSON.stringify(group));
                             groups.push(group);
                         }
                         deferred.resolve(groups);
                     }, function (response) {
+                        $log.error('combineMembers:failed:' + JSON.stringify(response,null,2));
                         deferred.reject(response);
                     });
                 }, function (response) {
-                    $log.warn('loadAllGroups:response received:' + response.status + ':' + response.statusText);
+                    $log.error('combineMembers:failed:' + JSON.stringify(response,null,2));
                     deferred.reject(response);
                 });
                 return deferred.promise;

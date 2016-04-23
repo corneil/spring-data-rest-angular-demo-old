@@ -43,6 +43,9 @@
 
     angular.module('springDataRestDemo').controller('UserController', ['UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
         function (UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
+            $scope.openSidenav = function () {
+                $mdSidenav('sideNav').open();
+            };
             $scope.selected = [];
             $scope.userSelected = 0;
             $scope.users = [];
@@ -86,19 +89,31 @@
                         promises.push(promise);
                     }
                     $q.all(promises).then(function (data) {
-                        $log.info('Deletion completed:' + data);
+                        var deleteCount = $scope.selected.length;
                         for (u in $scope.selected) {
                             var user = $scope.selected[u];
                             var index = $scope.users.indexOf(user);
-                            if(index >= 0) {
-                                $scope.users.splice(index, 1);
-                            } else {
-                                $log.warn('Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
-                            }
+                            invariant(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
+                            $scope.users.splice(index, 1);
                         }
                         $scope.selected = [];
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .parent(angular.element(document.body))
+                                .position('bottom left')
+                                .textContent('Deleted ' + deleteCount + ' Users')
+                                .hideDelay(3000)
+                        );
                     }, function (data) {
-                        $log.error('Deletion incompleted:' + data);
+                        $log.error('Deletion error:' + data.statusText);
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .parent(angular.element(document.body))
+                                .position('bottom left')
+                                .theme('error')
+                                .textContent('Deletion incompleted: ' + data.statusLine)
+                                .action('Close')
+                        );
                     });
                 }, function () {
                     $log.debug('Cancelled deletion');
@@ -142,7 +157,6 @@
                         newUser: true
                     }
                 }).then(function (user) {
-                    $log.info('adding user to array:' + JSON.stringify(user));
                     $scope.selectedUser = user;
                     $scope.users.push(user);
                 });

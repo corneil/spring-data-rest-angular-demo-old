@@ -47,3 +47,9 @@ image:src/docs/images/spring-data-rest-demo-data-model.png[Data Model]
 * [X] Delete Group(s) with prompt indicating impact.
 * [X] Validate Group input
 * [X] Group Members
+
+++++
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=corneil%2eduplessis%40gmail%2ecom&lc=ZA&item_name=Corneil%20du%20Plessis&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">
+<img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"><img>
+</a>
+++++

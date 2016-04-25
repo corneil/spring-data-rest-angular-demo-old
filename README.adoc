@@ -12,7 +12,6 @@ This project shows how far you can get by using Spring Data Rest without adding 
 * link:http://projects.spring.io/spring-data-jpa[Spring Data JPA] - 1.9.4
 * link:http://projects.spring.io/spring-data-rest[Spring Data Rest] - 2.4.4
 * link:http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html[Spring Web MVC] - 4.2.5
-* link:https://projectlombok.org[Lombok] - 1.16.6
 * link:https://angularjs.org[AngularJS] - 1.5.3
 * link:https://material.angularjs.org[Angular Material] - 1.0.6
 * link:https://github.com/daniel-nagy/md-data-table[Angular Material Design Data Table] - 0.10.3
@@ -36,8 +35,15 @@ A lot of the complexity has been collapse to show the essential relationships be
 image::src/docs/images/spring-data-rest-demo-components.png[Component Model]
 
 
+== Persistent Model
+
+This diagram describes the entities of the persistent model.
+
+image:src/docs/images/spring-data-rest-demo-data-model.png[Data Model]
+
 == ToDo
-* [ ] Delete User(s) with prompt indicating impact.
+* [X] Delete User(s) with prompt indicating impact.
 * [X] Validate User input in dialog
-* [ ] Delete Group(s) with prompt indicating impact.
+* [X] Delete Group(s) with prompt indicating impact.
 * [X] Validate Group input
+* [X] Group Members

@@ -8,4 +8,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "groups", itemResourceRel = "group", path = "groups")
 public interface GroupRepository extends CrudRepository<GroupInfo, Long> {
     GroupInfo findOneByGroupName(@Param("groupName") String groupName);
+    Long countByGroupOwner_UserId(@Param("userId") String userId);
 }

@@ -1,9 +1,7 @@
 <md-content ng-controller="GroupController" layout="column" flex class="relative" layout-fill role="main" ng-cloak>
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<md-button class="md-icon-button"
-			           aria-label="Open SideNav"
-			           ng-click="openSidenav()">
+			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
 				<md-icon md-svg-icon="navigation:ic_menu"></md-icon>
 			</md-button>
 			<h3>
@@ -36,12 +34,17 @@
 			</thead>
 			<tbody md-body>
 			<tr md-row md-select="group" md-select-id="groupName" md-auto-select="true" ng-repeat="group in groups">
-				<td md-cell><div style="max-width: 48px">
-					<img src="/assets/groups/{{group.groupName}}.svg" width="100%" height="auto" aria-label="{{group.description}}" />
-				</div></td>
-				<td md-cell><span>{{group.groupName}}</span></td>
-				<td md-cell><span>{{group.description}}</span></td>
-				<td md-cell><span>{{group._groupOwner.userId + ': ' + group._groupOwner.fullName}}</span></td>
+				<td md-cell>
+					<div style="max-width: 48px">
+						<img src="/assets/groups/{{group.groupName}}.svg" width="100%" height="auto" aria-label="{{group.description}}"/>
+					</div>
+				</td>
+				<td md-cell><span ng-bind="group.groupName"></span></td>
+				<td md-cell><span ng-bind="group.description"></span></td>
+				<td md-cell>
+					<span ng-bind="group._groupOwner.userId"></span>
+					<em ng-bind="'(' + group._groupOwner.fullName + ')'"></em>
+				</td>
 			</tr>
 			</tbody>
 		</table>

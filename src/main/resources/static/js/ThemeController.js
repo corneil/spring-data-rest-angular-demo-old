@@ -1,14 +1,9 @@
 (function () {
     'use strict';
+
     angular.module('springDataRestDemo').controller('ThemeController', ['$scope', '$q', '$mdMedia',
         '$mdColorPalette', '$log', '$mdSidenav',
         function ($scope, $q, $mdMedia, $mdColorPalette, $log, $mdSidenav) {
-            $scope.openSidenav = function () {
-                $mdSidenav('sideNav').open();
-            };
-
-            $scope.themes = [];
-            $scope.themes.push({value: 'default', name: 'Default'});
             function themeIndex(selected) {
                 for (var i in $scope.themes) {
                     var theme = $scope.themes[i];
@@ -18,6 +13,13 @@
                 }
                 return -1;
             }
+
+            $scope.openSidenav = function () {
+                $mdSidenav('sideNav').open();
+            };
+
+            $scope.themes = [];
+            $scope.themes.push({value: 'default', name: 'Default'});
 
             var colors = Object.keys($mdColorPalette);
             $scope.selectedTheme = 'default';

@@ -2,7 +2,6 @@ function loadGroupOwner(group, UserService, $q, $log) {
     var deferred = $q.defer();
     var promise = UserService.loadUser(group._links._groupOwner.href);
     promise.then(function (user) {
-        $log.debug('GroupService.loadAllGroups.groupOwner.loaded:' + group.groupName + ':' + user.userId);
         group._groupOwner = user;
         group.groupOwner = user._links.self.href;
         deferred.resolve(group);
@@ -21,17 +20,18 @@ function loadGroupOwner(group, UserService, $q, $log) {
                 list: {method: 'GET'},
                 create: {method: 'POST'}
             });
+
             function deleteGroupMember(groupMemberRef) {
-                $log.debug('deleteGroupMember:' + groupMemberRef);
+                $log.info('deleteGroupMember:' + groupMemberRef);
                 return $resource(groupMemberRef).delete().$promise;
             }
+
             function deleteMembersForGroup(group) {
                 var deferred = $q.defer();
                 var promises = [];
                 var GroupMembers = $resource('/api/group-member/search/findByMemberOfgroup_GroupName?groupName=:groupName', {groupName: '@groupName'});
                 GroupMembers.get({groupName: group.groupName}).$promise.then(
                     function (groups) {
-                        $log.debug('deleteMembersForGroup:find:' + JSON.stringify(groups,null,2));
                         for (var i in groups._embedded.groupMembers) {
                             var groupMember = groups._embedded.groupMembers[i];
                             promises.push(deleteGroupMember(groups._embedded.groupMembers[i]._links.self.href));
@@ -53,9 +53,7 @@ function loadGroupOwner(group, UserService, $q, $log) {
             return {
                 loadAllGroups: function () {
                     var deferred = $q.defer();
-                    $log.debug('calling /api/groups');
-                    Groups.list().$promise.then(
-                        function (groups) {
+                    Groups.list().$promise.then(function (groups) {
                             var groups = groups._embedded.groups;
                             var promises = [];
                             for (var g in groups) {
@@ -75,28 +73,22 @@ function loadGroupOwner(group, UserService, $q, $log) {
                     return deferred.promise;
                 },
                 loadGroup: function (groupRef) {
-                    $log.debug('loadGroup:' + groupRef);
                     var deferred = $q.defer();
                     var Group = $resource(groupRef, {}, {get: {method: 'GET', cache: groupCache}});
-                    Group.get().$promise.then(
-                        function (group) {
-                            loadGroupOwner(group, UserService, $q, $log).then(
-                                function (g) {
-                                    deferred.resolve(g);
-                                }, function (response) {
-                                    deferred.reject(response);
-                                });
+                    Group.get().$promise.then(function (group) {
+                        loadGroupOwner(group, UserService, $q, $log).then(function (g) {
+                            deferred.resolve(g);
                         }, function (response) {
-                            $log.error('loadGroup:failure:response:' + JSON.stringify(response, null, 2));
                             deferred.reject(response);
-                        }
-                    );
+                        });
+                    }, function (response) {
+                        $log.error('loadGroup:failure:response:' + JSON.stringify(response, null, 2));
+                        deferred.reject(response);
+                    });
                     return deferred.promise;
                 },
                 createGroup: function (group) {
                     var deferred = $q.defer();
-                    $log.debug('creating:' + JSON.stringify(group));
-                    $log.debug('calling /api/groups');
                     var savedOwner = group._groupOwner;
                     Groups.create(group).$promise.then(
                         function (group) {
@@ -112,7 +104,6 @@ function loadGroupOwner(group, UserService, $q, $log) {
                 },
                 saveGroup: function (group) {
                     var deferred = $q.defer();
-                    $log.debug('saving:' + JSON.stringify(group, null, 2));
                     var Group = $resource(group._links.self.href, {}, {save: {method: 'PUT'}});
                     Group.save(group).$promise.then(
                         function (saved) {
@@ -128,7 +119,6 @@ function loadGroupOwner(group, UserService, $q, $log) {
                 deleteGroup: function (group) {
                     var deferred = $q.defer();
                     deleteMembersForGroup(group).then(function () {
-                        $log.debug('deleting :' + group._links.self.href);
                         var Group = $resource(group._links.self.href);
                         Group.delete().$promise.then(
                             function (response) {

@@ -1,0 +1,30 @@
+<md-content ng-controller="NavController" layout="column" flex class="relative" layout-fill role="main" ng-cloak>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
+				<md-icon md-svg-icon="navigation:ic_menu"></md-icon>
+			</md-button>
+			<h3>Main Menu</h3>
+		</div>
+	</md-toolbar>
+	<md-content layout="row" layout-align="center center">
+		<md-grid-list flex="60" md-cols="3" md-row-height-gt-xs="192px" md-row-height-xs="64px" md-gutter-gt-xs="4em" md-gutter-xs="1em">
+			<md-grid-tile ng-repeat="item in mainMenu">
+				<md-button class="md-primary" ng-click="showMenu(item)">
+					<md-icon ng-class="iconStyle" class="md-primary md-hue-2" md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
+				</md-button>
+				<md-grid-tile-footer hide-xs layout="column">
+					<md-button>{{item.title}}</md-button>
+				</md-grid-tile-footer>
+			</md-grid-tile>
+			<md-grid-tile ng-repeat="item in adminMenu">
+				<md-button class="md-primary" ng-click="showMenu(item)">
+					<md-icon ng-class="iconStyle" class="md-primary md-hue-2" md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
+				</md-button>
+				<md-grid-tile-footer hide-xs layout="column">
+					<md-button>{{item.title}}</md-button>
+				</md-grid-tile-footer>
+			</md-grid-tile>
+		</md-grid-list>
+	</md-content>
+</md-content>

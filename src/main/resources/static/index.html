@@ -15,35 +15,37 @@
 		<md-button class="md-icon-button" aria-label="Close Sidenav" ng-click="closeSidenav()">
 			<md-icon md-svg-icon="navigation:ic_close"></md-icon>
 		</md-button>
-		<span flex></span>
+		<span flex="grow"></span>
 		<div layout="column" class="md-toolbar-tools-bottom inset">
 			<div>Spring Data Rest Demo</div>
 		</div>
 	</md-toolbar>
-	<md-list layout="column" layout-align="start start" layout:fragment="menu">
+	<md-list layout="column">
 		<md-list-item class="md-1-line" md-ink-ripple role="link" ng-repeat="item in mainMenu">
-			<md-button class="md-primary" ng-click="showMenu(item)">
+			<md-button style="text-align: left" class="md-primary" flex="grow" ng-click="showMenu(item)">
 				<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
-				<span class="md-body-2">{{item.title}}</span>
+				<span class="md-body-2" flex="grow" ng-bind="item.title"></span>
 			</md-button>
 		</md-list-item>
 	</md-list>
 	<md-divider></md-divider>
 	<md-subheader>Management</md-subheader>
-	<md-list layout="column" layout-align="start start">
+	<md-list layout="column">
 		<md-list-item class="md-1-line" md-ink-ripple role="link" ng-repeat="item in adminMenu">
-			<md-button class="md-primary" ng-click="showMenu(item)">
+			<md-button style="text-align: left" class="md-primary" flex="grow" ng-click="showMenu(item)">
 				<md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
-				<span class="md-body-2">{{item.title}}</span>
+				<span class="md-body-2" flex="grow" ng-bind="item.title"></span>
 			</md-button>
 		</md-list-item>
 	</md-list>
 </md-sidenav>
 <md-content layout-fill>
-	<ng-include src="activeContent"/>
+	<!--ng-include src="activeContent"/-->
+	<ng-view></ng-view>
 </md-content>
 <script type="text/javascript" src="/webjars/moment/2.12.0/moment.js"></script>
 <script type="text/javascript" src="/webjars/angular/1.5.3/angular.js"></script>
+<script type="text/javascript" src="/webjars/angular-route/1.5.3/angular-route.js"></script>
 <script type="text/javascript" src="/webjars/angular-resource/1.5.3/angular-resource.js"></script>
 <script type="text/javascript" src="/webjars/angular-messages/1.5.3/angular-messages.js"></script>
 <script type="text/javascript" src="/webjars/angular-animate/1.5.3/angular-animate.js"></script>
@@ -53,16 +55,17 @@
 <script type="text/javascript" src="/webjars/angular-material-data-table/0.10.3/dist/md-data-table.js"></script>
 <script type="text/javascript" src="/js/invariant.js"></script>
 <script type="text/javascript" src="/js/DataApp.js"></script>
-<script type="text/javascript" src="/js/NavController.js"></script>
+<script type="text/javascript" src="/js/NotificationService.js"></script>
 <script type="text/javascript" src="/js/UserService.js"></script>
 <script type="text/javascript" src="/js/GroupService.js"></script>
 <script type="text/javascript" src="/js/MemberService.js"></script>
+<script type="text/javascript" src="/js/NavController.js"></script>
 <script type="text/javascript" src="/js/UserController.js"></script>
 <script type="text/javascript" src="/js/GroupController.js"></script>
 <script type="text/javascript" src="/js/MemberController.js"></script>
 <script type="text/javascript" src="/js/ThemeController.js"></script>
 <script type="application/javascript">
-	angular.module('springDataRestDemo').config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider, $mdColorPalette) {
+	angular.module('springDataRestDemo').config(function ($mdDateLocaleProvider, $mdThemingProvider, $mdIconProvider, $mdColorPalette, $routeProvider) {
 		// Date configuration
 		$mdDateLocaleProvider.formatDate = function (date) {
 			return moment(date).format('YYYY-MM-DD');
@@ -75,12 +78,14 @@
 		$mdThemingProvider.theme("default")
 				.primaryPalette("indigo")
 				.accentPalette("blue")
+				.warnPalette('red')
 				.backgroundPalette('light-blue');
+
 		$mdThemingProvider.theme("error")
 				.primaryPalette("red")
-				.accentPalette("yellow");
+				.accentPalette("yellow")
+				.warnPalette('orange');
 
-		// var themeColours = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'];
 		var themeColours = Object.keys($mdColorPalette);
 		var prevColour = themeColours[themeColours.length - 1];
 		var prevPrevColour = themeColours[themeColours.length - 2];
@@ -95,6 +100,7 @@
 
 		}
 		$mdThemingProvider.alwaysWatchTheme(true);
+
 		// Icon configuration
 		$mdIconProvider.defaultIconSet("/iconsets/svg/content-icons.svg", 24);
 		var iconSets = ['action', 'alert', 'social', 'content', 'navigation', 'editor', 'image'];
@@ -102,6 +108,7 @@
 			var iconSet = iconSets[i];
 			$mdIconProvider.iconSet(iconSet, '/iconsets/svg/' + iconSet + '-icons.svg', 24);
 		}
+		configureRoutes($routeProvider);
 	});
 </script>
 </body>

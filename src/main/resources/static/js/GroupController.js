@@ -1,11 +1,10 @@
 (function () {
     'use strict';
-    function GroupDialogController(group, newGroup, GroupService, UserService, $scope, $mdDialog, $mdToast, $log) {
+    function GroupDialogController(group, newGroup, GroupService, UserService, $scope, $mdDialog, NotificationService, $log) {
         $log.info('GroupDialogController:newGroup=' + newGroup + ':group=' + JSON.stringify(group));
         $scope.users = [];
         $scope.userPromise = UserService.loadAllUsers();
         $scope.userPromise.then(function (users) {
-            $log.debug('GroupController.loaded ' + users.length + ' users');
             $scope.users = users;
             for (var i in users) {
                 users[i].selected = false;
@@ -26,13 +25,7 @@
             var promise = $scope.newGroup ? GroupService.createGroup($scope.group) : GroupService.saveGroup($scope.group);
             promise.then(function (group) {
                 $log.info('group=' + JSON.stringify(group));
-                $mdToast.show(
-                    $mdToast.simple()
-                        .position('bottom left')
-                        .parent(angular.element(document.body))
-                        .textContent($scope.newGroup ? 'Group Created' : 'Group Saved')
-                        .hideDelay(3000)
-                );
+                NotificationService.toastMessage($scope.newGroup ? 'Group Created' : 'Group Saved');
                 $mdDialog.hide(group);
             }, function (response) {
                 $log.error('Error response:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
@@ -46,15 +39,14 @@
         };
     };
 
-    angular.module('springDataRestDemo').controller('GroupController', ['GroupService', 'UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdToast', '$log',
-        function (GroupService, UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdToast, $log) {
+    angular.module('springDataRestDemo').controller('GroupController', ['GroupService', 'UserService', 'NotificationService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$log',
+        function (GroupService, UserService, NotificationService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $log) {
             $scope.selected = [];
             $scope.groupSelected = 0;
             $scope.groups = [];
             $scope.selectedGroup = null;
             $scope.promise = GroupService.loadAllGroups();
             $scope.promise.then(function (groups) {
-                $log.debug('loaded ' + groups.length + ' groups');
                 $scope.groups = groups;
                 for (var i in groups) {
                     groups[i].selected = false;
@@ -129,7 +121,6 @@
                     var promises = []
                     for (u in $scope.selected) {
                         var group = $scope.selected[u];
-                        $log.debug('Deleting:' + group.groupName);
                         var promise = GroupService.deleteGroup(group);
                         promises.push(promise);
                     }
@@ -143,23 +134,10 @@
                             $scope.groups.splice(rg, 1);
                         }
                         $scope.selected = [];
-                        $mdToast.show(
-                            $mdToast.simple()
-                                .parent(angular.element(document.body))
-                                .position('bottom left')
-                                .textContent('Deleted ' + deleteCount + ' Groups')
-                                .hideDelay(3000)
-                        );
+                        NotificationService.toastMessage('Deleted ' + deleteCount + ' Groups');
                     }, function (data) {
                         $log.error('Deletion incompleted:' + JSON.stringify(data));
-                        $mdToast.show(
-                            $mdToast.simple()
-                                .parent(angular.element(document.body))
-                                .position('bottom left')
-                                .theme('error')
-                                .textContent('Deletion incompleted: ' + data.statusLine)
-                                .action('Close')
-                        );
+                        NotificationService.toastError('Deletion incompleted: ' + data.statusLine, 'Close');
                     });
                 }, function () {
                     $log.debug('Cancelled deletion');

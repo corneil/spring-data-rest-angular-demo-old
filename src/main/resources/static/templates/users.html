@@ -9,7 +9,7 @@
 			</h3>
 			<span flex></span>
 			<md-button class="md-icon-button"
-			           ng-disabled="selected == null || selected.length != 1"
+			           ng-disabled="selected == undefined || selected == null || selected.length != 1"
 			           ng-click="editUser($event)"
 			           aria-label="Edit">
 				<md-icon md-svg-icon="editor:ic_mode_edit"></md-icon>
@@ -17,26 +17,49 @@
 			<md-button class="md-icon-button"
 			           aria-label="Delete"
 			           ng-click="deleteUsers($event)"
-			           ng-disabled="selected == null || selected.length.length == 0">
+			           ng-disabled="selected == undefined || selected == null || selected.length == 0">
 				<md-icon md-svg-icon="action:ic_delete"></md-icon>
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="4" md-row-height="16:9" md-gutter="4px" md-gutter-gt-sm="2px">
+	<md-progress-linear ng-show="users == undefined || users == null" md-mode="query"></md-progress-linear>
+	<md-grid-list ng-show="users != null"
+	              md-cols="1"
+	              md-cols-sm="2"
+	              md-cols-md="3"
+	              md-cols-gt-md="4"
+	              md-row-height="16:9"
+	              md-gutter="4px"
+	              md-gutter-gt-sm="2px">
 		<md-grid-tile ng-repeat="user in users" layouy="column" layout-align="start start">
-			<md-grid-tile-header><h3>{{user.userId}}: {{user.fullName}}</h3></md-grid-tile-header>
-			<div layout="row" layout-align="start start" flex>
-				<md-button class="md-fab md-primary" layout="column" layout-align="center center">
-					<img class="md-avatar" src="/assets/users/{{user.userId}}.png" height="48px" width="48px" aria-label="Avatar for {{user.userId}}"/>
-				</md-button>
-				<div layout="column" flex>
-					<span>{{user.emailAddress}}</span>
-					<span>{{user.dateOfBirth}}</span>
+			<md-grid-tile-header layout="row" flex>
+				<h3><span ng-bind="user.userId"></span><em ng-bind="'(' + user.fullName + ')'"></em></h3>
+			</md-grid-tile-header>
+			<div layout="column" layout-align="start start" flex>
+				<md-checkbox class="md-secondary"
+				             ng-model="user.selected"
+				             aria-label="Select User"
+				             ng-change="checkSelected(user)"></md-checkbox>
+				<div layout="row" layout-align="start start" flex>
+					<md-button class="md-fab md-primary" layout="column" layout-align="center center" ng-click="selectUser(user)">
+						<img class="md-avatar"
+						     src="/assets/users/{{user.userId}}.png"
+						     height="48px"
+						     width="48px"
+						     aria-label="Avatar for {{user.userId}}"/>
+					</md-button>
+					<div layout="column" flex>
+						<span ng-bind="user.emailAddress"></span>
+						<span ng-bind="user.dateOfBirth"></span>
+					</div>
 				</div>
 			</div>
 			<md-grid-tile-footer>
-				<md-button class="md-primary">
-					<span>Edit</span>
+				<md-button class="md-icon-button" ng-click="editUser($event, user)" aria-label="Edit">
+					<md-icon md-svg-icon="editor:ic_mode_edit"></md-icon>
+				</md-button>
+				<md-button class="md-icon-button" aria-label="Delete" ng-click="deleteUser($event, user)">
+					<md-icon md-svg-icon="action:ic_delete"></md-icon>
 				</md-button>
 			</md-grid-tile-footer>
 		</md-grid-tile>

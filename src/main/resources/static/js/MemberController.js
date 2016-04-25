@@ -1,135 +1,151 @@
 (function () {
     'use strict';
-    angular.module('springDataRestDemo').controller('MemberController', ['MemberService', 'UserService', '$scope', '$q', '$mdSidenav', '$mdMedia', '$mdDialog', '$log',
-        function (MemberService, UserService, $scope, $q, $mdSidenav, $mdMedia, $mdDialog, $log) {
-            function saveNewMember(member, group, MemberService) {
-                var newMember = {enabled: true, member: member.href, memberOfgroup: group.href};
-                var createDeferred = $q.defer();
-                MemberService.createMember(newMember).then(
-                    function (response) {
-                        member._member = response.data;
-                        createDeferred.resolve(member);
-                    }, function (response) {
-                        createDeferred.reject(response);
-                    }
-                );
-                return createDeferred.promise;
+    function MemberAddDialogController(selectedGroup, UserService, MemberService, NotificationService, $scope, $mdDialog, $log, $q) {
+        $scope.selectedGroup = selectedGroup;
+        $scope.selectedUser = null;
+        $scope.selectedUsers = [];
+        $scope.searchText = null;
+        $scope.busy = false;
+        $scope.transformChip = function (chip) {
+            if (angular.isObject(chip)) {
+                return chip;
             }
-            function hasMember(member, members) {
+            $log.debug("transformChip:" + JSON.stringify(chip, null, 2));
+            return {userId: chip};
+        };
+        function createMember(user) {
+            var createDeferred = $q.defer();
+            var newMember = {enabled: true, memberOfgroup: $scope.selectedGroup._group._links.self.href, member: user._links.self.href};
+            MemberService.createMember(newMember).then(function (member) {
+                createDeferred.resolve({member: member, user: user});
+            }, function (response) {
+                createDeferred.reject(response);
+            });
+            return createDeferred.promise;
+        };
+        $scope.cancel = function () {
+            $log.info('MemberAddDialogController.cancel');
+            $mdDialog.cancel();
+        };
+        $scope.save = function (ev) {
+            $scope.busy = true;
+            var promises = [];
+            for (var i in $scope.selectedUsers) {
+                promises.push(createMember($scope.selectedUsers[i]));
+            }
+            $q.all(promises).then(function (members) {
                 for (var i in members) {
-                    var item = members[i];
-                    if (item.userId == member.userId) {
-                        return true;
-                    }
+                    var member = members[i];
+                    MemberService.addMember($scope.selectedGroup, member.member, member.user);
                 }
-                return false;
-            }
-            $scope.groups = [];
-            $scope.promise = null;
+                $scope.busy = false;
+                $mdDialog.hide(members);
+            }, function (response) {
+                $scope.busy = false;
+                $log.error('save:all:error:' + JSON.stringify(response, null, 2));
+                NotificationService.toastError(response.statusText, 'Close');
+            });
+        };
+        $scope.queryMemberSearch = function (input) {
+            $scope.busy = false;
+            var deferred = $q.defer();
+            $scope.users = [];
+            $scope.userPromise = UserService.searchPartial(input);
+            $scope.userPromise.then(function (users) {
+                $log.debug('loaded ' + users.length + ' users input=' + input);
+                $scope.users = users;
+                deferred.resolve(users);
+                $scope.busy = false;
+            }, function (response) {
+                $log.error('Error response:' + JSON.stringify(response, null, 2));
+                NotificationService.toastError(response.statusText);
+                deferred.reject(response);
+                $scope.busy = false;
+            });
+            return deferred.promise;
+        };
+    }
+
+    angular.module('springDataRestDemo').controller('MemberController', ['MemberService', 'UserService', 'NotificationService', '$scope', '$q', '$mdSidenav', '$mdMedia', '$mdDialog', '$log',
+        function (MemberService, UserService, NotificationService, $scope, $q, $mdSidenav, $mdMedia, $mdDialog, $log) {
+            $scope.groups = null;
+            $scope.loading = false;
             $scope.selectedGroup = null;
             $scope.selectedMember = null;
             $scope.searchMember = null;
-            $scope.promise = MemberService.combineMembers();
+            $scope.promise = MemberService.loadAllMembers();
             $scope.promise.then(function (groups) {
-                $log.debug('loaded ' + groups.length + ' groups');
                 for (var g in groups) {
                     var group = groups[g];
                     group.$modified = false;
                 }
                 $scope.groups = groups;
             }, function (response) {
-                $log.error('Error response:' + response.status + ':' + response.statusText);
-                // TODO add toast for error
+                $log.error('loadAllMembers:response:' + JSON.stringify(response));
+                NotificationService.toastError(response.statusText, 'Close');
             });
-            $scope.users = [];
-            $scope.userPromise = UserService.loadAllUsers();
-            $scope.userPromise.then(function (users) {
-                $log.debug('loaded ' + users.length + ' users');
-                $scope.users = users;
-            }, function (response) {
-                $log.error('Error response:' + response.status + ':' + response.statusText);
-                // TODO add toast for error
-            });
-            $scope.transformMember = function (input) {
-                return MemberService.makeMember(input, null);
+            $scope.users = null;
+            $scope.selectGroup = function (group) {
+                if (group) {
+                    $scope.loading = true;
+                    MemberService.loadGroupMembers(group).then(function () {
+                        $scope.selectedGroup = group;
+                        $scope.loading = false;
+                    }, function (response) {
+                        $scope.selectedGroup = null;
+                        $log.error('selectGroup:response:' + JSON.stringify(response));
+                        NotificationService.toastError(response.statusText, 'Close');
+                        $scope.loading = false;
+                    });
+                }
             };
-            $scope.selectGroup = function(group) {
-                $scope.selectedGroup = group;
-            }
-            $scope.removeMember = function (group, member) {
-                $log.debug('removeMember:member=' + JSON.stringify(member, null, 2));
-                $log.debug('removeMember:group=' + JSON.stringify(group, null, 2));
-                member.enabled = false;
-                group.$modified = true;
-                group._removed.push(member);
-            };
-            $scope.addMember = function (group, member) {
-                $log.debug('addMember:member=' + JSON.stringify(member, null, 2));
-                $log.debug('addMember:group=' + JSON.stringify(group, null, 2));
-                member.enabled = true;
-                group.$modified = true;
-                if (!hasMember(member, group.members)) {
-                    group.members.push(member);
-                }
-                $log.debug('addMember:added:group=' + JSON.stringify(group, null, 2));
-            }
-            $scope.save = function (group) {
-                var deferred = $q.defer();
-                $log.debug('save:' + JSON.stringify(group, null, 2));
-                var toDelete = [];
-                var promises = [];
-                for (var i in group.members) {
-                    var member = group.members[i];
-                    if (!member.enabled && member._member && member._member.enabled) {
-                        toDelete.push(member._member);
-                    }
-                }
-                for (var i in group._removed) {
-                    var member = group._removed[i];
-                    if (!member.enabled && member._member && member._member.enabled) {
-                        if (toDelete.indexOf(member._member) < 0) {
-                            toDelete.push(member._member);
-                        }
-                    }
-                }
-                for (var i in toDelete) {
-                    var member = toDelete[i];
-                    promises.push(MemberService.deleteMember(member));
-                }
-                for (var i in group.members) {
-                    var member = group.members[i];
-                    if (member.enabled && member._member && !member._member.enabled) {
-                        member._member.enabled = true;
-                        promises.push(MemberService.saveMember(member._member));
-                    } else if (member.enabled && member._member == undefined) {
-                        promises.push(saveNewMember(member, group, MemberService));
-                    }
-                }
-                $q.all(promises).then(function (data) {
-                    deferred.resolve(data);
-                    group.$modified = false;
-                    // TODO toast to indicate completion
-                }, function (response) {
-                    deferred.reject(response);
-                    // TODO toast for error
+            $scope.deleteMember = function (ev, member) {
+                var index = $scope.selectedGroup.members.indexOf(member);
+                invariant(index >= 0, 'Expected member in selectedGroup.members');
+                var userMessage = 'Do you want to remove ' + member.userId + ' (' + member.fullName + ')?';
+                var confirm = $mdDialog.confirm()
+                    .title('Confirm removing a user?')
+                    .textContent(userMessage)
+                    .ariaLabel('Remove Member')
+                    .targetEvent(ev)
+                    .ok('Remove')
+                    .cancel('Cancel');
+                $mdDialog.show(confirm).then(function () {
+                    MemberService.deleteMember(member._member).then(function (response) {
+                        $scope.selectedGroup.members.splice(index, 1);
+                        NotificationService.toastMessage('Member removed');
+                    }, function (response) {
+                        NotificationService.toastMessage('Member remove failed:' + response.statusText);
+                    });
                 });
-                return deferred.promise;
             };
-            $scope.queryMemberSearch = function (input) {
-                $log.debug('queryMemberSearch:' + input);
-                var result = [];
-                var lowerInput = input.toLowerCase();
-                for (var u in $scope.users) {
-                    var user = $scope.users[u];
-                    if (user.userId.toLowerCase().indexOf(lowerInput) >= 0 ||
-                        user.fullName.toLowerCase().indexOf(lowerInput) >= 0 ||
-                        user.emailAddress.toLowerCase().indexOf(lowerInput) >= 0) {
-                        result.push(user);
+            $scope.toggleEnabledMember = function (ev, member) {
+                member._member.enabled = !member._member.enabled;
+                MemberService.saveEnabledMember(member._member).then(function (response) {
+                    $log.debug('disableMember:response:' + JSON.stringify(response, null, 2));
+                    member.enabled = member._member.enabled;
+                    NotificationService.toastMessage('Member ' + member.userId + '(' + member.fullName + ') ' + (member.enabled ? 'enabled' : 'disabled'));
+                }, function (response) {
+                    $log.error('disableMember:response:' + JSON.stringify(response, null, 2));
+                    NotificationService.toastError('Error disabling/enabling:' + response.statusText);
+                });
+            }
+            $scope.addMember = function (ev) {
+                invariant($scope.selectedGroup != null);
+                $mdDialog.show({
+                    parent: angular.element(document.body),
+                    controller: MemberAddDialogController,
+                    templateUrl: 'templates/add-members.html',
+                    targetEvent: ev,
+                    bindToController: true,
+                    locals: {
+                        selectedGroup: $scope.selectedGroup
                     }
-                }
-                $log.debug('queryMemberSearch:result=' + result.length);
-                return result;
+                }).then(function (members) {
+                    NotificationService.toastMessage('Added ' + members.length + ' members');
+                });
             };
+
             $scope.openSidenav = function () {
                 $mdSidenav('sideNav').open();
             };

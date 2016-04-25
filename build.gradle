@@ -35,6 +35,7 @@ dependencyManagement {
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
         dependency 'org.webjars.bower:angular:1.5.3'
+        dependency 'org.webjars.bower:angular-route:1.5.3'
         dependency 'org.webjars.bower:angular-resource:1.5.3'
         dependency 'org.webjars.bower:angular-animate:1.5.3'
         dependency 'org.webjars.bower:angular-messages:1.5.3'
@@ -87,6 +88,7 @@ dependencies {
     }
     compile 'javax.el:javax.el-api'
     webJarsBower 'org.webjars.bower:angular'
+    webJarsBower 'org.webjars.bower:angular-route'
     webJarsBower 'org.webjars.bower:angular-resource'
     webJarsBower 'org.webjars.bower:angular-animate'
     webJarsBower 'org.webjars.bower:angular-messages'

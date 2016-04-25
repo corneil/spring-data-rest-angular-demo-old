@@ -7,3 +7,22 @@
     color: #dd2c00;
     margin: 10px 0 0 25px;
 }
+
+.largeIcons {
+    width: 64px;
+    height: 64px;
+}
+
+.xLargeIcons {
+    width: 96px;
+    height: 96px;
+}
+
+.smallIcons {
+    width: 32px;
+    height: 32px;
+}
+
+.memberDisabled {
+    text-decoration: line-through;
+}

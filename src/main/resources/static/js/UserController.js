@@ -1,11 +1,11 @@
 (function () {
     'use strict';
-    function UserDialogController(user, newUser, UserService, $scope, $mdDialog, $mdToast, $log) {
+    function UserDialogController(user, newUser, UserService, NotificationService, $scope, $mdDialog, $log) {
         $log.info('UserDialogController:newUser=' + newUser + ':user=' + JSON.stringify(user));
 
         $scope.newUser = newUser;
         $scope.user = user;
-        $scope.errorMessages = []
+        $scope.errorMessages = [];
         $scope.dateOfBirth = !newUser && user.dateOfBirth ? moment(user.dateOfBirth, 'YYYY-MM-DD').toDate() : null;
         $scope.dialogTitle = $scope.newUser ? 'Create User' : 'Edit User';
         $log.info('scope values init:' + $scope.newUuser + ':' + $scope.dialogTitle + ':' + $scope.dateOfBirth + ':' + $scope.user);
@@ -22,13 +22,7 @@
             promise.then(function (user) {
                 $log.info('user=' + JSON.stringify(user));
                 $mdDialog.hide(user);
-                $mdToast.show(
-                    $mdToast.simple()
-                        .parent(angular.element(document.body))
-                        .position('bottom left')
-                        .textContent($scope.newUser ? 'User Created' : 'User Saved')
-                        .hideDelay(3000)
-                );
+                NotificationService.toastMessage($scope.newUser ? 'User Created' : 'User Saved');
             }, function (response) {
                 $log.error('Error response:' + response.status + ':' + response.statusText + ':' + JSON.stringify(response.data));
                 if (response.status == 409 && response.statusText == 'Conflict') {
@@ -41,126 +35,150 @@
         };
     };
 
-    angular.module('springDataRestDemo').controller('UserController', ['UserService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$mdEditDialog', '$log',
-        function (UserService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $mdEditDialog, $log) {
-            $scope.openSidenav = function () {
-                $mdSidenav('sideNav').open();
-            };
-            $scope.selected = [];
-            $scope.userSelected = 0;
-            $scope.users = [];
-            $scope.promise = null;
-            $scope.selectedUser = null;
-            $scope.promise = UserService.loadAllUsers();
-            $scope.promise.then(function (users) {
-                $log.debug('loaded ' + users.length + ' users');
-                $scope.users = users;
-                for (var i in users) {
-                    users[i].selected = false;
-                }
-            }, function (response) {
-                $log.error('Error response:' + response.status + ':' + response.statusText);
-            });
+    angular.module('springDataRestDemo').controller('UserController',
+        ['UserService', 'NotificationService', '$scope', '$q', '$mdMedia', '$mdSidenav', '$mdBottomSheet', '$mdDialog', '$log',
+            function (UserService, NotificationService, $scope, $q, $mdMedia, $mdSidenav, $mdBottomSheet, $mdDialog, $log) {
+                $scope.openSidenav = function () {
+                    $mdSidenav('sideNav').open();
+                };
+                $scope.selected = [];
+                $scope.userSelected = 0;
+                $scope.users = null;
+                $scope.selectedUser = null;
+                $scope.promise = UserService.loadAllUsers();
+                $scope.promise.then(function (users) {
+                    $log.debug('loaded ' + users.length + ' users');
+                    for (var i in users) {
+                        users[i].selected = false;
+                    }
+                    $scope.users = users;
+                }, function (response) {
+                    $log.error('Error response:' + response.status + ':' + response.statusText);
+                });
 
-            $scope.toggleUsersList = function () {
-                $mdSidenav('left').toggle();
-            };
-            $scope.deleteUsers = function (ev) {
-                var userMessage = 'You have selected to delete:';
-                var u;
-                for (u in $scope.selected) {
-                    var user = $scope.selected[u];
-                    userMessage = userMessage + ' ' + user.userId + ': ' + user.fullName;
-                }
-                // TODO refactor so that dialog shows progress and remains open until completion.
-                var confirm = $mdDialog.confirm()
-                    .title('Do you want to delete users?')
-                    .textContent(userMessage)
-                    .ariaLabel('Delete Users')
-                    .targetEvent(ev)
-                    .ok('Delete')
-                    .cancel('Cancel');
-                $mdDialog.show(confirm).then(function () {
-                    var promises = []
+                $scope.deleteUsers = function (ev) {
+                    var userMessage = 'You have selected to delete:';
+                    var u;
                     for (u in $scope.selected) {
                         var user = $scope.selected[u];
-                        $log.debug('Deleting:' + user.userId);
-                        var promise = UserService.deleteUser(user);
-                        promises.push(promise);
+                        userMessage = userMessage + ' ' + user.userId + ': ' + user.fullName;
                     }
-                    $q.all(promises).then(function (data) {
-                        var deleteCount = $scope.selected.length;
+                    // TODO refactor so that dialog shows progress and remains open until completion.
+                    var confirm = $mdDialog.confirm()
+                        .title('Do you want to delete users?')
+                        .textContent(userMessage)
+                        .ariaLabel('Delete Users')
+                        .targetEvent(ev)
+                        .ok('Delete')
+                        .cancel('Cancel');
+                    $mdDialog.show(confirm).then(function () {
+                        var promises = [];
                         for (u in $scope.selected) {
                             var user = $scope.selected[u];
+                            $log.debug('Deleting:' + user.userId);
+                            promises.push(UserService.deleteUser(user));
+                        }
+                        $q.all(promises).then(function () {
+                            var deleteCount = $scope.selected.length;
+                            for (u in $scope.selected) {
+                                var user = $scope.selected[u];
+                                var index = $scope.users.indexOf(user);
+                                invariant(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
+                                $scope.users.splice(index, 1);
+                            }
+                            $scope.selected = [];
+                            NotificationService.toastMessage('Deleted ' + deleteCount + ' Users');
+                        }, function (response) {
+                            $log.error('Deletion error:' + JSON.stringify(data, null, 2));
+                            NotificationService.toastError('Deletion incompleted: ' + data.statusLine, 'Close');
+                        });
+                    }, function () {
+                        $log.debug('Cancelled dialog');
+                    });
+                };
+                $scope.checkSelected = function (user) {
+                    var index = $scope.selected.indexOf(user);
+                    if (index == -1 && user.selected) {
+                        $scope.selected.push(user);
+                    } else if (index >= 0 && !user.selected) {
+                        $scope.selected.splice(index, 1);
+                    }
+                };
+                $scope.selectUser = function (user) {
+                    user.selected = !user.selected;
+                    $scope.checkSelected(user);
+                };
+
+                $scope.deleteUser = function (ev, user) {
+                    var userMessage = 'Do you want to delete ' + user.userId + ': ' + user.fullName + '?';
+                    var confirm = $mdDialog.confirm()
+                        .title('Confirm deleting a user?')
+                        .textContent(userMessage)
+                        .ariaLabel('Delete User')
+                        .targetEvent(ev)
+                        .ok('Delete')
+                        .cancel('Cancel');
+                    $mdDialog.show(confirm).then(function () {
+                        UserService.deleteUser(user).then(function (data) {
                             var index = $scope.users.indexOf(user);
                             invariant(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
                             $scope.users.splice(index, 1);
-                        }
-                        $scope.selected = [];
-                        $mdToast.show(
-                            $mdToast.simple()
-                                .parent(angular.element(document.body))
-                                .position('bottom left')
-                                .textContent('Deleted ' + deleteCount + ' Users')
-                                .hideDelay(3000)
-                        );
-                    }, function (data) {
-                        $log.error('Deletion error:' + data.statusText);
-                        $mdToast.show(
-                            $mdToast.simple()
-                                .parent(angular.element(document.body))
-                                .position('bottom left')
-                                .theme('error')
-                                .textContent('Deletion incompleted: ' + data.statusLine)
-                                .action('Close')
-                        );
+                            NotificationService.toastMessage('Deleted User:' + user.userId);
+                        }, function (data) {
+                            $log.error('Deletion error:' + JSON.stringify(data, null, 2));
+                            NotificationService.toastError('Deletion failed: ' + data.statusLine, 'Close');
+                        });
+                    }, function () {
+                        $log.debug('Cancelled deletion');
                     });
-                }, function () {
-                    $log.debug('Cancelled deletion');
-                });
-            };
-            $scope.editUser = function (ev) {
-                $scope.selectedUser = $scope.selected[0];
-                $log.info('edit user :' + $scope.selectedUser.userId);
-                $mdDialog.show({
-                    parent: angular.element(document.body),
-                    controller: UserDialogController,
-                    templateUrl: 'templates/user-dialog.html',
-                    targetEvent: ev,
-                    bindToController: true,
-                    locals: {
-                        user: $scope.selectedUser,
-                        newUser: false
+                };
+                $scope.editUser = function (ev, user) {
+                    if (user == undefined) {
+                        $scope.selectedUser = $scope.selected[0];
+                    } else {
+                        $scope.selectedUser = user;
                     }
-                }).then(function (user) {
-                    $log.info('updating user in array:' + JSON.stringify(user));
-                    $scope.selectedUser = user;
-                    for (var i in $scope.users) {
-                        var item = $scope.users[i];
-                        if (item.userId == user) {
-                            $scope.users[i] = user;
+                    $mdDialog.show({
+                        parent: angular.element(document.body),
+                        controller: UserDialogController,
+                        templateUrl: 'templates/user-dialog.html',
+                        targetEvent: ev,
+                        bindToController: true,
+                        UserService: UserService,
+                        locals: {
+                            user: $scope.selectedUser,
+                            newUser: false
                         }
-                    }
-                });
-            };
-            $scope.addUser = function (ev) {
-                $scope.selectedUser = {fullName: '', userId: '', emailAddress: '', dateOfBirth: null};
-                $log.info('adding user');
-                $mdDialog.show({
-                    parent: angular.element(document.body),
-                    controller: UserDialogController,
-                    templateUrl: 'templates/user-dialog.html',
-                    targetEvent: ev,
-                    bindToController: true,
-                    locals: {
-                        user: $scope.selectedUser,
-                        newUser: true
-                    }
-                }).then(function (user) {
-                    $scope.selectedUser = user;
-                    $scope.users.push(user);
-                });
-            };
-        }]);
+                    }).then(function (user) {
+                        $scope.selectedUser = user;
+                        for (var i in $scope.users) {
+                            var item = $scope.users[i];
+                            if (item.userId == user.userId) {
+                                $scope.users[i] = user;
+                            }
+                        }
+                    });
+                };
+                $scope.addUser = function (ev) {
+                    $scope.selectedUser = {fullName: '', userId: '', emailAddress: '', dateOfBirth: null};
+                    $log.info('adding user');
+                    $mdDialog.show({
+                        parent: angular.element(document.body),
+                        controller: UserDialogController,
+                        templateUrl: 'templates/user-dialog.html',
+                        NotificationService: NotificationService,
+                        targetEvent: ev,
+                        bindToController: true,
+                        UserService: UserService,
+                        locals: {
+                            user: $scope.selectedUser,
+                            newUser: true
+                        }
+                    }).then(function (user) {
+                        $scope.selectedUser = user;
+                        $scope.users.push(user);
+                    });
+                };
+            }]);
 
 })();

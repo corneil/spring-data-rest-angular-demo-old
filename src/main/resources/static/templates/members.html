@@ -1,9 +1,7 @@
 <md-content ng-controller="MemberController" layout="column" flex class="relative" layout-fill role="main" ng-cloak>
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<md-button class="md-icon-button"
-			           aria-label="Open SideNav"
-			           ng-click="openSidenav()">
+			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
 				<md-icon md-svg-icon="navigation:ic_menu"></md-icon>
 			</md-button>
 			<h3>
@@ -11,26 +9,53 @@
 			</h3>
 		</div>
 	</md-toolbar>
-	<md-progress-linear ng-show="groups.length == 0" md-mode="indeterminate"></md-progress-linear>
-	<div layout="row" layout-align="start start" flex>
-	<md-list flex="35">
-		<md-list-item ng-repeat="group in groups" class="md-2-line" aria-label="Select {{group.groupName}}" ng-click="selectGroup(group)">
-			<img class="md-avatar" src="/assets/groups/{{group.groupName}}.svg" width="48px" height="48px" aria-label="Avatar for {{group.description}}" />
-			<div class="md-list-item-text" layout="column">
-				<h3 class="md-headline" ng-bind="group.groupName"></h3>
-				<h4 class="md-subhead" ng-bind="group.description"></h4>
-			</div>
-			<md-divider></md-divider>
-		</md-list-item>
-	</md-list>
-	<md-list flex>
-		<md-list-item ng-repeat="member in selectedGroup.members" class="md-2-line">
-			<img class="md-avatar" src="/assets/users/{{member.userId}}.png" height="48px" width="48px" aria-label="Avatar for {{member.userId}}" />
-			<div class="md-list-item-text">
-				<h3>{{member.userId}}</h3>
-				<h4>{{member.fullName}}</h4>
-			</div>
-			<md-divider></md-divider>
-		</md-list-item>
-	</md-list>
+	<md-progress-linear ng-show="groups == null || loading" md-mode="query"></md-progress-linear>
+	<div layout="row" layout-align="start start" flex layout-fill>
+		<md-content flex="35" layout-padding>
+			<md-list ng-show="groups != null" flex>
+				<md-list-item ng-repeat="group in groups"
+				              class="md-2-line"
+				              aria-label="Select {{group.groupName}}"
+				              ng-click="selectGroup(group)">
+					<img class="md-avatar"
+					     src="/assets/groups/{{group.groupName}}.svg"
+					     width="48px"
+					     height="48px"
+					     aria-label="Avatar for {{group.description}}"/>
+					<div class="md-list-item-text" layout="column">
+						<h3 class="md-headline" ng-bind="group.groupName"></h3>
+						<h4 class="md-subhead" ng-bind="group.description"></h4>
+					</div>
+					<md-divider></md-divider>
+				</md-list-item>
+			</md-list>
+		</md-content>
+		<md-content ng-show="selectedGroup != null" class="md-hue-1" flex layout-fill>
+			<md-subheader class="md-hue-2">Members of {{selectedGroup.description}}</md-subheader>
+			<md-list flex>
+				<md-list-item ng-repeat="member in selectedGroup.members" class="md-2-line">
+					<img class="md-avatar"
+					     src="/assets/users/{{member.userId}}.png"
+					     height="48px"
+					     width="48px"
+					     aria-label="Avatar for {{member.userId}}"/>
+					<div class="md-list-item-text" ng-class="{memberDisabled: !member.enabled}">
+						<h3 ng-bind="member.userId"></h3>
+						<h4 ng-bind="member.fullName"></h4>
+					</div>
+					<md-button class="md-icon-button" aria-label="Disable / Enable" ng-click="toggleEnabledMember($event, member)">
+						<md-icon ng-show="member.enabled" md-svg-icon="social:ic_person_outline"></md-icon>
+						<md-icon ng-show="!member.enabled" md-svg-icon="social:ic_person"></md-icon>
+					</md-button>
+					<md-button class="md-icon-button" aria-label="Delete" ng-click="deleteMember($event, member)">
+						<md-icon md-svg-icon="action:ic_delete"></md-icon>
+					</md-button>
+					<md-divider ng-if="!$last"></md-divider>
+				</md-list-item>
+			</md-list>
+			<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="addMember($event)">
+				<md-icon md-svg-icon="content:ic_add"></md-icon>
+			</md-button>
+		</md-content>
+	</div>
 </md-content>

@@ -1,10 +1,13 @@
 @startuml
 
 package "AngularJS UI" {
+    [NavController] << controller >>
+    [NotificationService] << service >>
     [UserController] << controller >>
     [UserService] << service >>
     [UserDialogController] << controller >>
     [UserController] -down-> [UserService]
+    [UserController] -down-> [NotificationService]
     [UserDialogController] -down-> [UserService]
     [UserService] -right-> rest : http
     [GroupController] << controller >>
@@ -12,8 +15,13 @@ package "AngularJS UI" {
     [GroupDialogController] << controller >>
     [GroupDialogController] -down-> [UserService]
     [GroupController] -down-> [GroupService]
+    [GroupController] -down-> [NotificationService]
     [GroupDialogController] -down-> [GroupService]
     [GroupService] -left-> rest : http
+    [MemberController] -down-> [MemberService]
+    [MemberController] -> [NotificationService]
+    [MemberController] -down-> [UserService]
+    [MemberService] -> rest : http
 }
 
 package "Spring Data Rest Server" {

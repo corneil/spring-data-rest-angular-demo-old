@@ -14,7 +14,7 @@
 					<md-icon ng-class="iconStyle" class="md-primary md-hue-2" md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
 				</md-button>
 				<md-grid-tile-footer hide-xs layout="column">
-					<md-button>{{item.title}}</md-button>
+					<md-button ng-bind="item.title" ng-click="showMenu(item)"></md-button>
 				</md-grid-tile-footer>
 			</md-grid-tile>
 			<md-grid-tile ng-repeat="item in adminMenu">
@@ -22,7 +22,7 @@
 					<md-icon ng-class="iconStyle" class="md-primary md-hue-2" md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
 				</md-button>
 				<md-grid-tile-footer hide-xs layout="column">
-					<md-button>{{item.title}}</md-button>
+					<md-button ng-bind="item.title" ng-click="showMenu(item)"></md-button>
 				</md-grid-tile-footer>
 			</md-grid-tile>
 		</md-grid-list>

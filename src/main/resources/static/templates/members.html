@@ -1,15 +1,18 @@
-<md-content ng-controller="MemberController" layout="column" flex class="relative" layout-fill role="main" ng-cloak>
+<md-content layout="column" flex class="relative" layout-fill role="main" ng-cloak>
 	<md-toolbar>
-		<div class="md-toolbar-tools">
+		<div class="md-toolbar-tools" layout="row">
 			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
 				<md-icon md-svg-icon="navigation:ic_menu"></md-icon>
 			</md-button>
 			<h3>
 				<span>Group Members</span>
 			</h3>
+			<md-progress-circular class="md-accent md-hue-1" flex-offset="5"
+			                      ng-show="groups == null || loading"
+			                      md-mode="indeterminate"
+			                      md-diameter="48"></md-progress-circular>
 		</div>
 	</md-toolbar>
-	<md-progress-linear ng-show="groups == null || loading" md-mode="query"></md-progress-linear>
 	<div layout="row" layout-align="start start" flex layout-fill>
 		<md-content flex="35" layout-padding>
 			<md-list ng-show="groups != null" flex>
@@ -34,7 +37,7 @@
 			<md-subheader class="md-hue-2">Members of {{selectedGroup.description}}</md-subheader>
 			<md-list flex>
 				<md-list-item ng-repeat="member in selectedGroup.members" class="md-2-line">
-					<img class="md-avatar"
+					<img class="md-avatar" style="background-color: white"
 					     src="/assets/users/{{member.userId}}.png"
 					     height="48px"
 					     width="48px"

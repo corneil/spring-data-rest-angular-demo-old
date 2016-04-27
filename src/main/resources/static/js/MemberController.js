@@ -10,11 +10,13 @@
             if (angular.isObject(chip)) {
                 return chip;
             }
-            $log.debug("transformChip:" + JSON.stringify(chip, null, 2));
-            return {userId: chip};
+            NotificationService.toastError('Select an existing user');
+            return null;
         };
         function createMember(user) {
             var createDeferred = $q.defer();
+            assertNotNull($scope.selectedGroup);
+            assertNotNull($scope.selectedGroup._group);
             var newMember = {enabled: true, memberOfgroup: $scope.selectedGroup._group._links.self.href, member: user._links.self.href};
             MemberService.createMember(newMember).then(function (member) {
                 createDeferred.resolve({member: member, user: user});
@@ -78,6 +80,7 @@
                 for (var g in groups) {
                     var group = groups[g];
                     group.$modified = false;
+                    assertNotNull(group._group);
                 }
                 $scope.groups = groups;
             }, function (response) {

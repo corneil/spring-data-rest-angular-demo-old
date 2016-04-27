@@ -15,7 +15,8 @@
 			<md-autocomplete md-autofocus
 			                 md-selected-item="selectedUser"
 			                 md-search-text="searchText"
-			                 md-min-length="3"
+			                 md-min-length="2"
+			                 md-delay="150"
 			                 md-items="user in queryMemberSearch(searchText)"
 			                 md-item-text="user.userId"
 			                 placeholder="Search for a users">

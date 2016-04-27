@@ -8,7 +8,7 @@
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-dialog-content class="md-dialog-content">
+	<md-dialog-content class="md-dialog-content md-hue-1">
 		<form name="groupForm" ng-submit="save()">
 			<div layout="column">
 				<md-input-container class="md-block" md-is-error="groupForm.groupName.$touched && groupForm.groupName.$invalid">
@@ -36,20 +36,20 @@
 						<ng-message when="required">You must supply a description.</ng-message>
 					</ng-messages>
 				</md-input-container>
-				<md-input-container class="md-block" md-is-error="groupForm.groupOwner.$touched && groupForm.groupOwner.$invalid">
-					<md-select name="groupOwner"
-					           placeholder="Select group owner"
-					           ng-model="group.groupOwner"
-					           md-on-open="userPromise"
-					           required
-					           style="min-width: 200px;">
-						<md-option ng-value="user._links.self.href" ng-repeat="user in users">{{user.userId + ': ' + user.fullName}}
-						</md-option>
-					</md-select>
-					<ng-messages for="groupForm.groupOwner.$error" role="alert" multiple>
-						<ng-message when="required">You must select a group owner.</ng-message>
-					</ng-messages>
-				</md-input-container>
+				<md-autocomplete required
+				                 flex
+				                 md-selected-item="group._groupOwner"
+				                 md-search-text="searchText"
+				                 md-min-length="2"
+				                 md-delay="150"
+				                 md-items="user in queryMemberSearch(searchText)"
+				                 md-item-text="user.fullName"
+				                 md-floating-label="Search for a user">
+					<span md-highlight-text="searchText">{{user.userId}} : {{user.fullName}}</span>
+				</md-autocomplete>
+				<ng-messages for="groupForm.groupOwner.$error" role="alert" multiple>
+					<ng-message when="required">You must select a group owner.</ng-message>
+				</ng-messages>
 			</div>
 		</form>
 		<div class="validation-messages" ng-repeat="error in errorMessages">

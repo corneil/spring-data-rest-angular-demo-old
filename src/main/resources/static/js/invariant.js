@@ -39,3 +39,24 @@ function invariant(condition, format, a, b, c, d, e, f) {
         throw error;
     }
 }
+
+
+function assertNotNull(expression, format, a, b, c, d, e, f) {
+    if(expression == undefined || expression == null) {
+        var error;
+        if (format === undefined) {
+            error = new Error('Expression not null');
+        } else {
+            var args = [a, b, c, d, e, f];
+            var argIndex = 0;
+            error = new Error(
+                format.replace(/%s/g, function () {
+                    return args[argIndex++];
+                })
+            );
+            error.name = 'Invariant Violation';
+        }
+        error.framesToPop = 1;
+        throw error;
+    }
+}

@@ -1,27 +1,37 @@
 (function () {
     'use strict';
-    function GroupDialogController(group, newGroup, GroupService, UserService, $scope, $mdDialog, NotificationService, $log) {
+    function GroupDialogController(group, newGroup, GroupService, UserService, $scope, $mdDialog, NotificationService, $q, $log) {
         $log.info('GroupDialogController:newGroup=' + newGroup + ':group=' + JSON.stringify(group));
-        $scope.users = [];
-        $scope.userPromise = UserService.loadAllUsers();
-        $scope.userPromise.then(function (users) {
-            $scope.users = users;
-            for (var i in users) {
-                users[i].selected = false;
-            }
-        }, function (response) {
-            $log.error('Error response:' + response.status + ':' + response.statusText);
-        });
         $scope.newGroup = newGroup;
         $scope.group = group;
+        $scope.searchText = null;
+        $scope.busy = false;
         $scope.dialogTitle = $scope.newGroup ? 'Create Group' : 'Edit Group';
         $log.info('scope values init:' + $scope.newGroup + ':' + $scope.dialogTitle + ':' + ':' + $scope.group);
         $scope.cancel = function () {
             $log.info('GroupDialogController.cancel');
             $mdDialog.cancel();
         };
+        $scope.queryMemberSearch = function (input) {
+            $scope.busy = true;
+            var deferred = $q.defer();
+            $scope.users = [];
+            $scope.userPromise = UserService.searchPartial(input);
+            $scope.userPromise.then(function (users) {
+                $log.debug('loaded ' + users.length + ' users input=' + input);
+                $scope.users = users;
+                deferred.resolve(users);
+                $scope.busy = false;
+            }, function (response) {
+                $log.error('Error response:' + JSON.stringify(response, null, 2));
+                NotificationService.toastError(response.statusText);
+                deferred.reject(response);
+                $scope.busy = false;
+            });
+            return deferred.promise;
+        };
         $scope.save = function () {
-            $log.info('GroupDialogController.save');
+            $log.info('GroupDialogController.save:' + JSON.stringify($scope.group, null, 2));
             var promise = $scope.newGroup ? GroupService.createGroup($scope.group) : GroupService.saveGroup($scope.group);
             promise.then(function (group) {
                 $log.info('group=' + JSON.stringify(group));
@@ -45,7 +55,7 @@
             $scope.groupSelected = 0;
             $scope.groups = [];
             $scope.selectedGroup = null;
-            $scope.promise = GroupService.loadAllGroups();
+            $scope.promise = GroupService.loadAllGroups(true);
             $scope.promise.then(function (groups) {
                 $scope.groups = groups;
                 for (var i in groups) {
@@ -109,7 +119,6 @@
                     var user = $scope.selected[u];
                     groupMessage = groupMessage + ' ' + user.groupName;
                 }
-                // TODO refactor so that dialog shows progress and remains open until completion.
                 var confirm = $mdDialog.confirm()
                     .title('Do you want to delete groups?')
                     .textContent(groupMessage)

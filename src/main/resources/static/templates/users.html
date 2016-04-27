@@ -1,4 +1,4 @@
-<md-content ng-controller="UserController" layout="column" flex class="relative" layout-fill role="main">
+<md-content layout="column" flex class="relative" layout-fill role="main">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
@@ -41,7 +41,7 @@
 				             aria-label="Select User"
 				             ng-change="checkSelected(user)"></md-checkbox>
 				<div layout="row" layout-align="start start" flex>
-					<md-button class="md-fab md-primary" layout="column" layout-align="center center" ng-click="selectUser(user)">
+					<md-button class="md-fab" style="background-color: white" layout="column" layout-align="center center" ng-click="selectUser(user)">
 						<img class="md-avatar"
 						     src="/assets/users/{{user.userId}}.png"
 						     height="48px"

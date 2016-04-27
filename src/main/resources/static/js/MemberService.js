@@ -13,7 +13,7 @@
                     description: group.description,
                     href: group._links.self.href,
                     _group: group,
-                    members: [],
+                    members: null,
                     _removed: []
                 };
                 groupMap[group.groupName] = groupInfo;
@@ -53,28 +53,52 @@
             }
 
             function loadGroupMembers(group) {
-                var promises = [];
-                for (var i in group.members) {
-                    var groupMember = group.members[i];
-                    if (groupMember.href == undefined || groupMember.href == null) {
-                        promises.push(loadAndAddUser(groupMember));
-                    }
-                }
-                var resultDeferred = $q.defer();
-                if (promises.length > 0) {
-                    $q.all(promises).then(function () {
-                        resultDeferred.resolve(group);
+                var memberList = $q.defer();
+                if(group.members == undefined || group.members == null) {
+                    var MembersForGroup = $resource('/api/group-member/search/findByMemberOfgroup_GroupName?groupName=:groupName', {groupName: '@groupName'});
+                    MembersForGroup.get({groupName: group.groupName}).$promise.then(function (groupMembers) {
+                        group.members = [];
+                        var members = groupMembers._embedded.groupMembers;
+                        for (var index in members) {
+                            var member = members[index];
+                            var deferredMember = makeDeferredMember(member);
+                            group.members.push(deferredMember);
+                        }
+                        memberList.resolve(group.members);
                     }, function (response) {
-                        resultDeferred.reject(response);
+                        $log.error('loadGroupMembers:failed:' + JSON.stringify(response, null, 2));
+                        memberList.reject(response);
                     });
                 } else {
-                    if (group.members.length == 0) {
-                        $log.debug("loadGroupMembers:no promised. empty group");
-                    } else {
-                        $log.debug("loadGroupMembers:no promised. already loaded");
-                    }
-                    resultDeferred.resolve({});
+                    memberList.resolve(group.members);
                 }
+                var resultDeferred = $q.defer();
+                var promises = [];
+                memberList.promise.then(function (members) {
+                    for (var i in members) {
+                        var groupMember = members[i];
+                        if (groupMember.href == undefined || groupMember.href == null) {
+                            promises.push(loadAndAddUser(groupMember));
+                        }
+                    }
+                    if (promises.length > 0) {
+                        $q.all(promises).then(function () {
+                            resultDeferred.resolve(group);
+                        }, function (response) {
+                            resultDeferred.reject(response);
+                        });
+                    } else {
+                        if (group.members.length == 0) {
+                            $log.debug("loadGroupMembers:no promised. empty group");
+                        } else {
+                            $log.debug("loadGroupMembers:no promised. already loaded");
+                        }
+                        resultDeferred.resolve({});
+                    }
+                }, function (response) {
+                    $log.error('loadGroupMembers:failed:' + JSON.stringify(response, null, 2));
+                    resultDeferred.reject(response);
+                });
                 return resultDeferred.promise;
             }
 
@@ -89,31 +113,11 @@
                 var deferred = $q.defer();
                 var groupMap = {};
                 GroupService.loadAllGroups().then(function (groups) {
+                    var result = [];
                     for (var i in groups) {
-                        makeGroup(groups[i], groupMap);
+                        result.push(makeGroup(groups[i], groupMap));
                     }
-                    GroupMembers.list().$promise.then(function (groupMembers) {
-                        var members = groupMembers._embedded.groupMembers;
-                        var promises = [];
-                        for (var m in members) {
-                            promises.push(loadGroup(groupMap, members[m]));
-                        }
-                        $q.all(promises).then(function () {
-                            var groups = [];
-                            var keys = Object.keys(groupMap);
-                            for (var k in keys) {
-                                var group = groupMap[keys[k]];
-                                groups.push(group);
-                            }
-                            deferred.resolve(groups);
-                        }, function (response) {
-                            $log.error('combineMembers:failed:' + JSON.stringify(response, null, 2));
-                            deferred.reject(response);
-                        });
-                    }, function (response) {
-                        $log.error('loadAllMembers:failed:' + JSON.stringify(response, null, 2));
-                        deferred.reject(response);
-                    });
+                    deferred.resolve(result);
                 });
                 return deferred.promise;
             }

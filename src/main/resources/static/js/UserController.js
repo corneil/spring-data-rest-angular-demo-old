@@ -83,7 +83,7 @@
                             for (u in $scope.selected) {
                                 var user = $scope.selected[u];
                                 var index = $scope.users.indexOf(user);
-                                invariant(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
+                                assertTrue(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
                                 $scope.users.splice(index, 1);
                             }
                             $scope.selected = [];
@@ -121,7 +121,7 @@
                     $mdDialog.show(confirm).then(function () {
                         UserService.deleteUser(user).then(function (data) {
                             var index = $scope.users.indexOf(user);
-                            invariant(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
+                            assertTrue(index >= 0, 'Could not find:' + user.userId + ' in ' + JSON.stringify($scope.users, null, 2));
                             $scope.users.splice(index, 1);
                             NotificationService.toastMessage('Deleted User:' + user.userId);
                         }, function (data) {

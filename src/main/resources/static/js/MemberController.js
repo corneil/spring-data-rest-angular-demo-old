@@ -104,7 +104,7 @@
             };
             $scope.deleteMember = function (ev, member) {
                 var index = $scope.selectedGroup.members.indexOf(member);
-                invariant(index >= 0, 'Expected member in selectedGroup.members');
+                assertTrue(index >= 0, 'Expected member in selectedGroup.members');
                 var userMessage = 'Do you want to remove ' + member.userId + ' (' + member.fullName + ')?';
                 var confirm = $mdDialog.confirm()
                     .title('Confirm removing a user?')
@@ -134,7 +134,7 @@
                 });
             }
             $scope.addMember = function (ev) {
-                invariant($scope.selectedGroup != null);
+                assertTrue($scope.selectedGroup != null);
                 $mdDialog.show({
                     parent: angular.element(document.body),
                     controller: MemberAddDialogController,

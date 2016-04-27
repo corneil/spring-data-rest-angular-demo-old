@@ -18,7 +18,6 @@
             $scope.users = [];
             $scope.userPromise = UserService.searchPartial(input);
             $scope.userPromise.then(function (users) {
-                $log.debug('loaded ' + users.length + ' users input=' + input);
                 $scope.users = users;
                 deferred.resolve(users);
                 $scope.busy = false;
@@ -31,10 +30,8 @@
             return deferred.promise;
         };
         $scope.save = function () {
-            $log.info('GroupDialogController.save:' + JSON.stringify($scope.group, null, 2));
             var promise = $scope.newGroup ? GroupService.createGroup($scope.group) : GroupService.saveGroup($scope.group);
             promise.then(function (group) {
-                $log.info('group=' + JSON.stringify(group));
                 NotificationService.toastMessage($scope.newGroup ? 'Group Created' : 'Group Saved');
                 $mdDialog.hide(group);
             }, function (response) {
@@ -139,7 +136,7 @@
                         for (u in $scope.selected) {
                             var group = $scope.selected[u];
                             var rg = $scope.groups.indexOf(group);
-                            invariant(rg >= 0, 'Expected group index in groups');
+                            assertTrue(rg >= 0, 'Expected group index in groups');
                             $scope.groups.splice(rg, 1);
                         }
                         $scope.selected = [];

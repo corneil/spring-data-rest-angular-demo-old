@@ -1,4 +1,4 @@
-<md-dialog aria-label="{{dialogTitle}}" ng-cloak flex="50">
+<md-dialog aria-label="{{dialogTitle}}" ng-cloak flex-sm="80" flex-gt-sm="50" flex-xs="100">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<h2 ng-bind="dialogTitle"></h2>
@@ -10,7 +10,7 @@
 	</md-toolbar>
 	<md-dialog-content name="userFormDlgContent" class="md-dialog-content" layout-padding>
 		<form name="userForm" ng-submit="save()">
-			<div layout="row">
+			<div layout="row" layout-xs="column">
 				<md-input-container class="md-block" flex="30" md-is-error="userForm.userId.$touched && userForm.userId.$invalid">
 					<label>User Id</label>
 					<input name="userId"
@@ -37,7 +37,7 @@
 					</ng-messages>
 				</md-input-container>
 			</div>
-			<div layout="row">
+			<div layout="row" layout-xs="column">
 				<md-input-container class="md-block" flex md-is-error="userForm.emailAddress.$touched && userForm.emailAddress.$invalid">
 					<label>Email</label>
 					<input name="emailAddress" ng-model="user.emailAddress" type="email" required>

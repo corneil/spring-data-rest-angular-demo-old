@@ -1,4 +1,4 @@
-<md-dialog aria-label="Add Members" ng-cloak flex="30">
+<md-dialog aria-label="Add Members" ng-cloak flex-xs="100" flex-sm="80" flex-md="50" flex-gt-md="30" style="z-index: 110">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<h2>Add Members</h2>
@@ -10,7 +10,8 @@
 	</md-toolbar>
 	<md-dialog-content class="md-dialog-content">
 		<md-progress-linear ng-show="busy" md-mode="query"></md-progress-linear>
-		<div class="label">Add Users</div>
+		<label>Group</label>
+		<em ng-bind="selectedGroup.description"></em>
 		<md-chips ng-model="selectedUsers" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match="true">
 			<md-autocomplete md-autofocus
 			                 md-selected-item="selectedUser"

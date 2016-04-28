@@ -17,8 +17,7 @@ import java.util.Date;
 @Table(name = "users", schema = "sd")
 public class UserInfo {
     @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date dateOfBirth;
     private String emailAddress;
     @NotNull

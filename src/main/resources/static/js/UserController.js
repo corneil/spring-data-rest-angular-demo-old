@@ -61,7 +61,7 @@
                     var u;
                     for (u in $scope.selected) {
                         var user = $scope.selected[u];
-                        userMessage = userMessage + ' ' + user.userId + ': ' + user.fullName;
+                        userMessage = userMessage + ' ' + user.userId + ' (' + user.fullName + ')';
                     }
                     // TODO refactor so that dialog shows progress and remains open until completion.
                     var confirm = $mdDialog.confirm()
@@ -110,7 +110,7 @@
                 };
 
                 $scope.deleteUser = function (ev, user) {
-                    var userMessage = 'Do you want to delete ' + user.userId + ': ' + user.fullName + '?';
+                    var userMessage = 'Do you want to delete ' + user.userId + ' (' + user.fullName + ')?';
                     var confirm = $mdDialog.confirm()
                         .title('Confirm deleting a user?')
                         .textContent(userMessage)

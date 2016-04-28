@@ -28,40 +28,33 @@
 	              md-cols-sm="2"
 	              md-cols-md="3"
 	              md-cols-gt-md="4"
-	              md-row-height="16:9"
+	              md-row-height="10em"
 	              md-gutter="4px"
 	              md-gutter-gt-sm="2px">
-		<md-grid-tile ng-repeat="user in users" layouy="column" layout-align="start start">
-			<md-grid-tile-header layout="row" flex>
-				<h3><span ng-bind="user.userId"></span><em ng-bind="'(' + user.fullName + ')'"></em></h3>
-			</md-grid-tile-header>
-			<div layout="column" layout-align="start start" flex>
+		<md-grid-tile ng-repeat="user in users" layouy="column" layout-align="start stretch">
+			<md-grid-tile-header layout="row" layout-align="start center" flex>
 				<md-checkbox class="md-secondary"
 				             ng-model="user.selected"
 				             aria-label="Select User"
 				             ng-change="checkSelected(user)"></md-checkbox>
-				<div layout="row" layout-align="start start" flex>
-					<md-button class="md-fab" style="background-color: white" layout="column" layout-align="center center" ng-click="selectUser(user)">
-						<img class="md-avatar"
-						     src="/assets/users/{{user.userId}}.png"
-						     height="48px"
-						     width="48px"
-						     aria-label="Avatar for {{user.userId}}"/>
-					</md-button>
-					<div layout="column" flex>
-						<span ng-bind="user.emailAddress"></span>
-						<span ng-bind="user.dateOfBirth"></span>
-					</div>
+				<strong ng-bind="user.userId"></strong>
+				<em ng-bind="' (' + user.fullName + ')'"></em>
+			</md-grid-tile-header>
+			<div layout="row" layout-align="start start" flex>
+				<md-button style="background-color: white"
+				           layout="column"
+				           ng-class="{'md-fab':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
+				           layout-align="center center"
+				           ng-click="selectUser(user)">
+					<img src="/assets/users/{{user.userId}}.png"
+					     ng-class="{'md-avatar':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
+					     aria-label="Avatar for {{user.userId}}"/>
+				</md-button>
+				<div layout="column" flex>
+					<span ng-bind="user.emailAddress"></span>
+					<span ng-bind="user.dateOfBirth"></span>
 				</div>
 			</div>
-			<md-grid-tile-footer>
-				<md-button class="md-icon-button" ng-click="editUser($event, user)" aria-label="Edit">
-					<md-icon md-svg-icon="editor:ic_mode_edit"></md-icon>
-				</md-button>
-				<md-button class="md-icon-button" aria-label="Delete" ng-click="deleteUser($event, user)">
-					<md-icon md-svg-icon="action:ic_delete"></md-icon>
-				</md-button>
-			</md-grid-tile-footer>
 		</md-grid-tile>
 	</md-grid-list>
 	<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="addUser($event)">

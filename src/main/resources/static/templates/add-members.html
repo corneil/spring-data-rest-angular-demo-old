@@ -11,7 +11,7 @@
 	<md-dialog-content class="md-dialog-content">
 		<md-progress-linear ng-show="busy" md-mode="query"></md-progress-linear>
 		<div class="label">Add Users</div>
-		<md-chips ng-model="selectedUsers" md-autocomplete-snap md-transform-chip="transformChip($chip)">
+		<md-chips ng-model="selectedUsers" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match="true">
 			<md-autocomplete md-autofocus
 			                 md-selected-item="selectedUser"
 			                 md-search-text="searchText"
@@ -20,13 +20,10 @@
 			                 md-items="user in queryMemberSearch(searchText)"
 			                 md-item-text="user.userId"
 			                 placeholder="Search for a users">
-				<span md-highlight-text="searchText">{{user.userId}} : {{user.fullName}}</span>
+				<span md-highlight-text="searchText">{{user.userId}} ({{user.fullName}})</span>
 			</md-autocomplete>
 			<md-chip-template>
-                <span>
-                <strong ng-bind="$chip.userId"></strong>
-                <em ng-bind="'(' + $chip.fullName + ')'"></em>
-                </span>
+				<span><strong ng-bind="$chip.userId"></strong><em ng-bind="' (' + $chip.fullName + ')'"></em></span>
 			</md-chip-template>
 		</md-chips>
 	</md-dialog-content>

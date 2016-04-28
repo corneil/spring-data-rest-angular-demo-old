@@ -23,6 +23,11 @@
     height: 32px;
 }
 
+.mediumIcons {
+    width: 48px;
+    height: 48px;
+}
+
 .memberDisabled {
     text-decoration: line-through;
 }

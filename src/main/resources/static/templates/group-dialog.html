@@ -45,7 +45,7 @@
 				                 md-items="user in queryMemberSearch(searchText)"
 				                 md-item-text="user.fullName"
 				                 md-floating-label="Search for a user">
-					<span md-highlight-text="searchText">{{user.userId}} : {{user.fullName}}</span>
+					<span md-highlight-text="searchText">{{user.userId}} ({{user.fullName}})</span>
 				</md-autocomplete>
 				<ng-messages for="groupForm.groupOwner.$error" role="alert" multiple>
 					<ng-message when="required">You must select a group owner.</ng-message>

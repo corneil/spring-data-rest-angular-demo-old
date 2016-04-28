@@ -88,12 +88,16 @@
                 NotificationService.toastError(response.statusText, 'Close');
             });
             $scope.users = null;
+            $scope.closeRight = function () {
+                $mdSidenav('right').close();
+            };
             $scope.selectGroup = function (group) {
                 if (group) {
                     $scope.loading = true;
                     MemberService.loadGroupMembers(group).then(function () {
                         $scope.selectedGroup = group;
                         $scope.loading = false;
+                        $mdSidenav('right').open();
                     }, function (response) {
                         $scope.selectedGroup = null;
                         $log.error('selectGroup:response:' + JSON.stringify(response));
@@ -127,7 +131,7 @@
                 MemberService.saveEnabledMember(member._member).then(function (response) {
                     $log.debug('disableMember:response:' + JSON.stringify(response, null, 2));
                     member.enabled = member._member.enabled;
-                    NotificationService.toastMessage('Member ' + member.userId + '(' + member.fullName + ') ' + (member.enabled ? 'enabled' : 'disabled'));
+                    NotificationService.toastMessage('Member ' + member.userId + ' (' + member.fullName + ') ' + (member.enabled ? 'enabled' : 'disabled'));
                 }, function (response) {
                     $log.error('disableMember:response:' + JSON.stringify(response, null, 2));
                     NotificationService.toastError('Error disabling/enabling:' + response.statusText);

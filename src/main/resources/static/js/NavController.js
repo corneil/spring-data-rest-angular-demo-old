@@ -73,7 +73,7 @@ function configureRoutes($routeProvider) {
                 $scope.closeSidenav = function () {
                     $mdSidenav('sideNav').close();
                 };
-                $scope.iconStyle = {smallIcons: $mdMedia('xs'), largeIcons: $mdMedia('sm'), xLargeIcons: $mdMedia('gt-sm')};
+                $scope.iconStyle = {'medium-icons': $mdMedia('xs'), 'large-icons': $mdMedia('sm'), 'x-large-icons': $mdMedia('gt-sm')};
                 $scope.activeContent = 'templates/users.html';
                 $scope.mainMenu = mainMenu;
                 $scope.adminMenu = adminMenu;

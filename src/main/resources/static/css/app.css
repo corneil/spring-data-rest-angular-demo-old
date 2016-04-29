@@ -8,25 +8,41 @@
     margin: 10px 0 0 25px;
 }
 
-.largeIcons {
-    width: 64px;
-    height: 64px;
+.tiny-icons {
+    max-width: 24px;
+    max-height: 24px;
+    width: 24px;
+    height: 24px;
 }
 
-.xLargeIcons {
-    width: 96px;
-    height: 96px;
-}
-
-.smallIcons {
+.small-icons {
+    max-width: 32px;
+    max-height: 32px;
     width: 32px;
     height: 32px;
 }
 
-.mediumIcons {
+.medium-icons {
+    max-width: 48px;
+    max-height: 48px;
     width: 48px;
     height: 48px;
 }
+
+.large-icons {
+    max-width: 64px;
+    max-height: 64px;
+    width: 64px;
+    height: 64px;
+}
+
+.x-large-icons {
+    max-width: 96px;
+    max-height: 96px;
+    width: 96px;
+    height: 96px;
+}
+
 
 .memberDisabled {
     text-decoration: line-through;

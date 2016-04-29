@@ -45,6 +45,7 @@
                 $scope.userSelected = 0;
                 $scope.users = null;
                 $scope.selectedUser = null;
+                $scope.iconStyle = {'medium-icons':$mdMedia('sm'), 'large-icons': $mdMedia('md'), 'x-large-icons': $mdMedia('gt-md')};
                 $scope.promise = UserService.loadAllUsers();
                 $scope.promise.then(function (users) {
                     $log.debug('loaded ' + users.length + ' users');

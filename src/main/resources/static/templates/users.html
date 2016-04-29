@@ -35,14 +35,8 @@
 					<span class="md-subhead" ng-bind="user.fullName"></span>
 				</md-card-title-text>
 				<md-card-title-media>
-					<md-button style="background-color: white"
-					           layout="column"
-					           ng-class="{'md-media-xs':$mdMedia('xs'), 'md-media-sm':$mdMedia('sm'), 'md-media-md':$mdMedia('md'), 'md-media-lg':$mdMedia('gt-md'), 'card-media':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
-					           layout-align="center center"
-					           ng-click="selectUser(user)">
-						<img src="/assets/users/{{user.userId}}.png"
-						     ng-class="{'md-avatar':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
-						     aria-label="Avatar for {{user.userId}}"/>
+					<md-button style="background-color: white" layout="column" class="card-media" layout-align="center center" ng-click="selectUser(user)">
+						<img class="md-avatar" src="/assets/users/{{user.userId}}.png" aria-label="Avatar for {{user.userId}}"/>
 					</md-button>
 				</md-card-title-media>
 			</md-card-title>

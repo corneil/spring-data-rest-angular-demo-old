@@ -148,7 +148,6 @@ def webJarsBower = new File(project.buildDir, 'webjarsBower')
 task expandWebJarsBower(type: Copy) {
     into webJarsBower
     configurations.webJarsBower.resolve().each {
-        logger.lifecycle("expand: $it")
         from zipTree(it.absoluteFile)
     }
 }

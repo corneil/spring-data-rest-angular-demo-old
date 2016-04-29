@@ -13,7 +13,17 @@
                 }
                 return -1;
             }
-
+            $scope.backgroundHues = ['','md-hue-1', 'md-hue-2', 'md-hue-3'];
+            $scope.buttonItems = [
+                {name:'Primary', class:'md-primary'},
+                {name:'Primary Hue 1', class:'md-primary md-hue-1'},
+                {name:'Primary Hue 2', class:'md-primary md-hue-2'},
+                {name:'Primary Hue 3', class:'md-primary md-hue-3'},
+                {name:'Accent', class:'md-accent'},
+                {name:'Accent Hue 1', class:'md-accent md-hue-1'},
+                {name:'Accent Hue 2', class:'md-accent md-hue-2'},
+                {name:'Accent Hue 3', class:'md-accent md-hue-3'}
+            ];
             $scope.openSidenav = function () {
                 $mdSidenav('sideNav').open();
             };

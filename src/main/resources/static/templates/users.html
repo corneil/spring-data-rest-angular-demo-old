@@ -27,41 +27,44 @@
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-content>
-		<md-grid-list ng-show="users != null"
-		              md-cols="1"
-		              md-cols-sm="2"
-		              md-cols-md="3"
-		              md-cols-gt-md="4"
-		              md-row-height="10em"
-		              md-gutter="4px"
-		              md-gutter-gt-sm="2px">
-			<md-grid-tile ng-repeat="user in users" layouy="column" layout-align="start stretch">
-				<md-grid-tile-header layout="row" layout-align="start center" flex>
-					<md-checkbox class="md-secondary"
-					             ng-model="user.selected"
-					             aria-label="Select User"
-					             ng-change="checkSelected(user)"></md-checkbox>
-					<strong ng-bind="user.userId"></strong>
-					<em ng-bind="' (' + user.fullName + ')'"></em>
-				</md-grid-tile-header>
-				<div layout="row" layout-align="start start" flex>
+	<md-content layout="row" layout-wrap>
+		<md-card ng-repeat="user in users">
+			<md-card-title>
+				<md-card-title-text>
+					<span class="md-headline" ng-bind="user.userId"></span>
+					<span class="md-subhead" ng-bind="user.fullName"></span>
+				</md-card-title-text>
+				<md-card-title-media>
 					<md-button style="background-color: white"
 					           layout="column"
-					           ng-class="{'md-fab':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
+					           ng-class="{'md-media-xs':$mdMedia('xs'), 'md-media-sm':$mdMedia('sm'), 'md-media-md':$mdMedia('md'), 'md-media-lg':$mdMedia('gt-md'), 'card-media':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
 					           layout-align="center center"
 					           ng-click="selectUser(user)">
 						<img src="/assets/users/{{user.userId}}.png"
 						     ng-class="{'md-avatar':true, smallIcons: $mdMedia('xs'), mediumIcons: $mdMedia('gt-xs')}"
 						     aria-label="Avatar for {{user.userId}}"/>
 					</md-button>
-					<div layout="column" flex>
-						<span ng-bind="user.emailAddress"></span>
-						<span ng-bind="user.dateOfBirth"></span>
-					</div>
+				</md-card-title-media>
+			</md-card-title>
+			<md-card-content>
+				<div layout="column" flex>
+					<span ng-bind="user.emailAddress"></span>
+					<span ng-bind="user.dateOfBirth"></span>
 				</div>
-			</md-grid-tile>
-		</md-grid-list>
+			</md-card-content>
+			<md-card-actions layout="row" layout-align="end bottom" layout-padding>
+				<md-checkbox class="md-secondary small-button"
+				             ng-model="user.selected"
+				             aria-label="Select User"
+				             ng-change="checkSelected(user)"></md-checkbox>
+				<md-button class="md-icon-button small-button" ng-click="editUser($event, user)" aria-label="Edit">
+					<md-icon md-svg-icon="editor:ic_mode_edit"></md-icon>
+				</md-button>
+				<md-button class="md-icon-button small-button" aria-label="Delete" ng-click="deleteUser($event, user)">
+					<md-icon md-svg-icon="action:ic_delete"></md-icon>
+				</md-button>
+			</md-card-actions>
+		</md-card>
 	</md-content>
 	<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="addUser($event)">
 		<md-icon md-svg-icon="content:ic_add"></md-icon>

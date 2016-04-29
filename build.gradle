@@ -34,12 +34,12 @@ dependencyManagement {
     }
     dependencies {
         dependency 'org.projectlombok:lombok:1.16.6'
-        dependency 'org.webjars.bower:angular:1.5.3'
-        dependency 'org.webjars.bower:angular-route:1.5.3'
-        dependency 'org.webjars.bower:angular-resource:1.5.3'
-        dependency 'org.webjars.bower:angular-animate:1.5.3'
-        dependency 'org.webjars.bower:angular-messages:1.5.3'
-        dependency 'org.webjars.bower:angular-aria:1.5.3'
+        dependency 'org.webjars.bower:angular:1.5.5'
+        dependency 'org.webjars.bower:angular-route:1.5.5'
+        dependency 'org.webjars.bower:angular-resource:1.5.5'
+        dependency 'org.webjars.bower:angular-animate:1.5.5'
+        dependency 'org.webjars.bower:angular-messages:1.5.5'
+        dependency 'org.webjars.bower:angular-aria:1.5.5'
         dependency 'org.webjars.bower:angular-material:1.0.7'
         dependency 'org.webjars.bower:angular-gravatar:0.4.1'
         dependency 'org.webjars:material-design-icons:2.2.0'
@@ -148,9 +148,38 @@ def webJarsBower = new File(project.buildDir, 'webjarsBower')
 task expandWebJarsBower(type: Copy) {
     into webJarsBower
     configurations.webJarsBower.resolve().each {
+        logger.lifecycle("expand: $it")
         from zipTree(it.absoluteFile)
     }
 }
+
+task copyWebJarsBower(type: Copy, dependsOn: expandWebJarsBower) {
+    // Copy to resources while removing version number and webjars from name
+    destinationDir =  new File(sourceSets.main.output.resourcesDir, 'META-INF/resources')
+    def depMap = [:]
+    def versionsMissing = false
+    configurations.webJarsBower.dependencies.each {
+        depMap.put(it.name, it.version != null ? it.version : 'N/A')
+        if(it.version == null) {
+            versionsMissing = true
+        }
+   }
+    if(versionsMissing) {
+        configurations.webJarsBower.resolve().each {
+            def name = it.name.substring(0, it.name.lastIndexOf('-'))
+            def version = it.name.substring(it.name.lastIndexOf('-') + 1, it.name.lastIndexOf('.'))
+            depMap.put(name, version)
+        }
+    }
+    depMap.each { entry ->
+        def targetDir = entry.key
+        def sourceDir = new File(webJarsBower, "META-INF/resources/webjars/$entry.key/$entry.value")
+        into(targetDir) {
+            from sourceDir
+        }
+    }
+}
+
 
 def extractName(String name, String suffix) {
     if(name.endsWith(suffix)) {
@@ -196,13 +225,8 @@ task createSvgIconSets(dependsOn: expandSvgIcons) {
     }
 }
 
-task copyWebJarsBower(type: Copy, dependsOn: expandWebJarsBower) {
-    destinationDir = sourceSets.main.output.resourcesDir
-    from webJarsBower
-}
 
 
-// processResources.dependsOn createSvgIconSets
 processResources.dependsOn copyWebJarsBower
 
 cleanTest.dependsOn cleanTestJpa

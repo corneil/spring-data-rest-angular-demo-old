@@ -1,21 +1,13 @@
-<md-content md-theme="{{selectedTheme}}"
-            md-theme-watch="true"
-            layout="column"
-            flex
-            class="relative"
-            layout-fill
-            role="main">
+<md-content md-theme="{{selectedTheme}}" md-theme-watch="true" layout="column" flex class="relative" layout-fill role="main">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<md-button class="md-icon-button"
-			           aria-label="Open SideNav"
-			           ng-click="openSidenav()">
+			<md-button class="md-icon-button" aria-label="Open SideNav" ng-click="openSidenav()">
 				<md-icon md-svg-icon="navigation:ic_menu"></md-icon>
 			</md-button>
 			<md-button class="md-icon-button" aria-label="Previous" ng-click="prevTheme()">
 				<md-icon md-svg-icon="navigation:ic_chevron_left"></md-icon>
 			</md-button>
-			<md-select flex="20" ng-model="selectedTheme" aria-label="Theme Selector">
+			<md-select style="min-width: 16em" ng-model="selectedTheme" aria-label="Theme Selector">
 				<md-option ng-repeat="theme in themes" value="{{theme.value}}">
 					{{theme.name}}
 				</md-option>
@@ -25,111 +17,40 @@
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-content
-	<div layout="column" flex class="relative" layout-fill>
-		<md-content layout="column">
-			<div class="label">Buttons</div>
-			<div layout="row">
-				<md-button class="md-raised">Button</md-button>
-				<md-button class="md-raised" ng-disabled="true">Disabled</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-primary md-raised">Primary</md-button>
-				<md-button class="md-primary md-raised md-hue-1">Primary Hue 1</md-button>
-				<md-button class="md-primary md-raised md-hue-2">Primary Hue 2</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-accent md-raised">Accent</md-button>
-				<md-button class="md-accent md-raised md-hue-1">Accent Hue 1</md-button>
-				<md-button class="md-accent md-raised md-hue-2">Accent Hue 2</md-button>
-			</div>
-		</md-content>
-		<md-content layout="column" class="md-hue-1">
-			<div class="label">Buttons</div>
-			<div layout="row">
-				<md-button class="md-raised">Button</md-button>
-				<md-button class="md-raised" ng-disabled="true">Disabled</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-primary md-raised">Primary</md-button>
-				<md-button class="md-primary md-raised md-hue-1">Primary Hue 1</md-button>
-				<md-button class="md-primary md-raised md-hue-2">Primary Hue 2</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-accent md-raised">Accent</md-button>
-				<md-button class="md-accent md-raised md-hue-1">Accent Hue 1</md-button>
-				<md-button class="md-accent md-raised md-hue-2">Accent Hue 2</md-button>
-			</div>
-		</md-content>
-		<md-content layout="column" class="md-hue-2">
-			<div class="label">FAB Buttons</div>
-			<div layout="row">
-				<md-button class="md-fab" ng-disabled="true" aria-label="Disabled">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab" aria-label="Public">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-raised md-primary">Primary</md-button>
-				<md-button class="md-fab md-primary" aria-label="Primary">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-primary md-hue-1" aria-label="Primary Hue 1">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-primary md-hue-2" aria-label="Primary Hue 2">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-raised md-accent">Accent</md-button>
-				<md-button class="md-fab md-accent" aria-label="Accent">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-accent md-hue-1" aria-label="Accent Hue 1">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-accent md-hue-2" aria-label="Accent Hue 2">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-			</div>
-		</md-content>
-		<md-content layout="column" class="md-hue-3">
-			<div class="label">FAB Buttons</div>
-			<div layout="row">
-				<md-button class="md-fab" ng-disabled="true" aria-label="Disabled">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab" aria-label="Public">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-raised md-primary">Primary</md-button>
-				<md-button class="md-fab md-primary" aria-label="Primary">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-primary md-hue-1" aria-label="Primary Hue 1">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-primary md-hue-2" aria-label="Primary Hue 2">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-			</div>
-			<div layout="row">
-				<md-button class="md-raised md-accent">Accent</md-button>
-				<md-button class="md-fab md-accent" aria-label="Accent">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-accent md-hue-1" aria-label="Accent Hue 1">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-accent md-hue-2" aria-label="Accent Hue 2">
-					<md-icon md-svg-icon="social:ic_public"></md-icon>
-				</md-button>
-			</div>
-		</md-content>
-	</div>
+	<md-content layout="column">
+		<section layout="row"
+		         layout-align-gt-sm="start center"
+		         layout-align-sm="start start"
+		         layout-wrap
+		         layout-padding
+		         ng-repeat="hue in backgroundHues"
+		         class="{{hue}}">
+			<div class="label" style="min-width: 8em">Buttons <em ng-bind="hue"></em></div>
+			<md-button class="small-button md-raised" aria-label="Button">Button</md-button>
+			<md-button class="small-button md-raised" aria-label="Disabled" ng-disabled="true">Disabled</md-button>
+			<md-button ng-repeat="button in buttonItems"
+			           class="small-button md-raised {{button.class}}"
+			           aria-label="{{button.name}}"
+			           ng-bind="button.name"></md-button>
+		</section>
+		<section layout="row"
+		         layout-align-gt-xs="start center"
+		         layout-align-xs="start start"
+		         layout-wrap
+		         ng-repeat="hue in backgroundHues"
+		         class="{{hue}} md-content">
+			<div class="label" style="min-width: 10em">FAB Buttons <em ng-bind="hue"></em></div>
+			<md-button class="md-mini md-fab" aria-label="FAB Button">
+				<md-tooltip md-direction="right">FAB Button</md-tooltip>
+				<md-icon md-svg-icon="social:ic_public"></md-icon>
+			</md-button>
+			<md-button class="md-mini md-fab" ng-disabled="true" aria-label="Disabled">
+				<md-icon md-svg-icon="social:ic_public"></md-icon>
+			</md-button>
+			<md-button ng-repeat="button in buttonItems" class="md-mini md-fab {{button.class}}" aria-label="{{button.name}}">
+				<md-tooltip md-direction="right">FAB {{button.name}}</md-tooltip>
+				<md-icon md-svg-icon="social:ic_public"></md-icon>
+			</md-button>
+		</section>
+	</md-content>
 </md-content>
